@@ -33,6 +33,7 @@ let translate (globals, functions) =
   and float_t    = L.double_type context
   and string_t   = L.pointer_type (L.i8_type context)
   and void_t     = L.void_type   context
+  and html_t     = (*DO SOMETHING HERE*)
     in
 
   (* Return the LLVM type for a DRRTY type *)

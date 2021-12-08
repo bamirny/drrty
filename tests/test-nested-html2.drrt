@@ -27,7 +27,8 @@ LTAG LTAG STRINGLIT RTAG RTAG
 "<br>", "<img>", ...  = TAG
 
 
-// 
+// DrrtyParse
+
 html:
     LBRACE expr RBRACE  { Hexpr($2) }
  |  LTAG html RTAG      { Bitag($1, $2)    $1 == $3 } if not equal raise error to stop, disregarding the "/"

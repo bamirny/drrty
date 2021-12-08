@@ -5,7 +5,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 
 type uop = Neg | Not
 
-type typ = Int | Bool | Float | Void | String | List of typ
+type typ = Int | Bool | Float | Void | String | Html | List of typ
 
 type bind = typ * string
 
@@ -19,7 +19,16 @@ type expr =
   | Unop of uop * expr
   | Assign of string * expr
   | Call of string * expr list
+  | Seq of expr list (*ADDED SEQ*)
+  | Html of string
   | Noexpr
+
+type html = 
+    Hexpr of expr (*will turn into strings *)
+  |   Bitag of string * html 
+  |   Tag of string   (*branches *)
+  |   Hstringlit of string (* leaf nodes *)
+  |   Hseq of html * html  (*branches *)
 
 type stmt =
     Block of stmt list
@@ -72,6 +81,9 @@ let rec string_of_expr = function
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Call(f, el) ->
     f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
+  | Seq(s) -> string_of_list s (*ADDED SEQ*)
+  (* | HSeq(s) -> string_of_list s  *)
+  | Html(s) -> s (*should output html*)
   | Noexpr -> ""
   and string_of_list = function
       l -> "[" ^ (string_of_seq l) ^ "]"
@@ -79,6 +91,16 @@ let rec string_of_expr = function
       x :: y :: a -> string_of_expr x ^ ", " ^ string_of_seq (y :: a)
     | x :: _ -> string_of_expr x
     | [] -> ""
+
+(* let rec string_of_html = function
+     Hexpr(e) -> string_of_expr e
+  |  Bitag(t, h) -> t ^ string_of_html h ^ t
+  |  Hstringlit(s) -> s
+  |  Hseq(h1, h2) -> string_of_html h1 ^ string_of_html h2 ^ string_of_html h2 ^ string_of_html h1
+  and string_of_hseq = function
+    x :: y :: a -> string_of_expr x ^ ", " ^ string_of_hseq (y :: a)
+  | x :: _ -> string_of_expr x
+  | [] -> "" *)
 
 let rec string_of_stmt = function
     Block(stmts) ->
@@ -100,6 +122,7 @@ let rec string_of_typ = function
   | Void -> "void"
   | String -> "str"
   | List(t) -> "List(" ^ string_of_typ t ^ ")"
+  | Html -> "html"  (* will need to change on how we want string to look *)
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 

@@ -4,12 +4,13 @@
 open Ast
 %}
 
-%token SEMI COLON LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET COMMA PLUS MINUS TIMES DIVIDE ASSIGN
-%token NOT EQ NEQ LT LEQ GT GEQ AND OR EOL
+%token SEMI COLON LKITE RKITE LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET COMMA PLUS MINUS TIMES DIVIDE ASSIGN
+%token NOT EQ NEQ LT LEQ GT GEQ AND OR EOL SEQ
 %token FUNCTION END RETURN IF ELSE FOR WHILE INT BOOL FLOAT LIST VOID STRING
+%token LKITE LTAG RTAG RKITE TAG
 %token <int> LITERAL
 %token <bool> BLIT
-%token <string> ID FLIT STRING_LITERAL
+%token <string> ID FLIT STRING_LITERAL STRINGLIT
 %token EOF
 
 %start program
@@ -108,6 +109,14 @@ expr:
   | ID ASSIGN expr   { Assign($1, $3)         }
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2                   }
+  | LKITE html RKITE    { Html($2)            }
+
+html:
+    LBRACE expr RBRACE  { Hexpr($2)           }
+ |  LTAG html RTAG      { Html($2)            } /* we still have to check if RTAG matches LTAG*/
+//  |  TAG                 { Tag($1)             }
+ |  html html %prec SEQ { Hseq($1, $2)        }
+ |  STRINGLIT           { Hstringlit($1)      }
 
 args_opt:
     /* nothing */ { [] }
