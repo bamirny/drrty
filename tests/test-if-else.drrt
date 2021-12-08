@@ -1,0 +1,13 @@
+
+function int main(){
+
+    if( False ){ 
+        prints("Hello world"); 
+    }
+    else{ 
+        prints("Sorry world");
+    }
+    
+    return 0; 
+}
+

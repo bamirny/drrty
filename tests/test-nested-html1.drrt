@@ -1,0 +1,9 @@
+
+function int main(){
+
+    str a; 
+    a = "hello world"; 
+    str val = "<div> { a } </div>"; 
+    prints(val);
+    return 0; 
+}

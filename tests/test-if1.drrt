@@ -1,0 +1,8 @@
+
+function int main(){
+
+    if( True ){ 
+        prints("Hello world"); 
+    }
+    return 0; 
+}

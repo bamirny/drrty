@@ -1,0 +1,10 @@
+
+function int main(){
+  str s;
+  s = "hello world"; 
+  prints(s);  
+  return 0;
+}
+
+
+
