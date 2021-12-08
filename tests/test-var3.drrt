@@ -1,0 +1,12 @@
+int a;
+
+
+function int main(){
+  a = 30;
+  print(a);
+  makeHeader("Hello!");
+  makeText("DRRTY's first program!");
+  return 0;
+}
+
+

@@ -1,4 +1,4 @@
-(* Semantic checking for the QWEB compiler *)
+(* Semantic checking for the DRRTY compiler *)
 
 open Ast
 open Sast
@@ -40,8 +40,13 @@ let check (globals, functions) =
       locals = []; body = [] } map
     in List.fold_left add_bind StringMap.empty [ ("print", Int);
 			                         ("printb", Bool);
-			                         (* ("printf", Float); *)
+			                         ("printf", Float);
                                ("prints", String);
+                               ("makeHeader", String);
+                               ("makeSubheader", String);
+                               ("makeText", String);
+                               ("makeImage", String);
+                               ("makeList", String) ]
   in
 
   (* Add function name to symbol table *)
@@ -93,10 +98,10 @@ let check (globals, functions) =
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr = function
         Literal  l -> (Int, SLiteral l)
-      (* | Fliteral l -> (Float, SFliteral l) *)
+      | Fliteral l -> (Float, SFliteral l)
       | BoolLit l  -> (Bool, SBoolLit l)
       | Noexpr     -> (Void, SNoexpr)
-      (* | StringLit s -> (String, SStringLit s) *)
+      | StringLit s -> (String, SStringLit s)
       | Id s       -> (type_of_identifier s, SId s)
       | Assign(var, e) as ex ->
           let lt = type_of_identifier var
@@ -107,7 +112,7 @@ let check (globals, functions) =
       | Unop(op, e) as ex ->
           let (t, e') = expr e in
           let ty = match op with
-            Neg when t = Int (* || t = Float *) -> t
+            Neg when t = Int || t = Float -> t
           | Not when t = Bool -> Bool
           | _ -> raise (Failure ("illegal unary operator " ^
                                  string_of_uop op ^ string_of_typ t ^
@@ -121,11 +126,11 @@ let check (globals, functions) =
           (* Determine expression type based on operator and operand types *)
           let ty = match op with
               Add | Sub | Mult | Div when same && t1 = Int   -> Int
-            (* | Add | Sub | Mult | Div when same && t1 = Float -> Float *)
+            | Add | Sub | Mult | Div when same && t1 = Float -> Float
             | Add                          when same && t1 = String -> String
           | Equal | Neq            when same               -> Bool
           | Less | Leq | Greater | Geq
-                     when same && (t1 = Int (*|| t1 = Float*) ) -> Bool
+                     when same && (t1 = Int || t1 = Float) -> Bool
           | And | Or when same && t1 = Bool -> Bool
           | _ -> raise (
 	      Failure ("illegal binary operator " ^
@@ -157,10 +162,10 @@ let check (globals, functions) =
     (* Return a semantically-checked statement i.e. containing sexprs *)
     let rec check_stmt = function
         Expr e -> SExpr (expr e)
-      (* | If(p, b1, b2) -> SIf(check_bool_expr p, check_stmt b1, check_stmt b2)
+      | If(p, b1, b2) -> SIf(check_bool_expr p, check_stmt b1, check_stmt b2)
       | For(e1, e2, e3, st) ->
 	  SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
-      | Repeat(p, s) -> SRepeat(check_bool_expr p, check_stmt s) *)
+      | While(p, s) -> SWhile(check_bool_expr p, check_stmt s)
       | Return e -> let (t, e') = expr e in
         if t = func.typ then SReturn (t, e')
         else raise (

@@ -1,0 +1,7 @@
+function int main(){
+  makeHeader("Hello!");
+  makeText("DRRTY's first program!");
+  return 0;
+}
+
+

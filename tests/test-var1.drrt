@@ -1,0 +1,14 @@
+function int letter(){
+  int a;
+  a = 18;
+  return a;
+}
+
+function int main(){
+  print(letter());
+  makeHeader("Hello!");
+  makeText("DRRTY's first program!");
+  return 0;
+}
+
+

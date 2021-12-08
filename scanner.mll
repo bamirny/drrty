@@ -1,64 +1,66 @@
 (* Ocamllex scanner for DRRTY *)
 
-{ open drrtyparser }
+{
+  open Drrtyparse
 
+  let unescape s =
+      Scanf.sscanf ("\"" ^ s ^ "\"") "%S%!" (fun x -> x)
+ }
 
 let digit = ['0' - '9']
 let digits = digit+
-
-(* let ascii = ([' '-'!' '#'-'[' ']'-'~'])
+let ascii = ([' '-'!' '#'-'[' ']'-'~'])
 let escape = '\\' ['\\' ''' '"' 'n' 'r' 't']
-let string = '"' ( (ascii | escape)* as s) '"' *)
+let string = '"' ( (ascii | escape)* as s) '"'
 
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
-| "/*"     { comment lexbuf }           (* Open comment *)
-| '('      { LPAREN }                    (* Left paran *)
-| ')'      { RPAREN }                    (* Right paran *)
-| '{'      { LBRACE }                    (* Left brace *)
-| '}'      { RBRACE }                    (* Right brace *)
-| '['      { LBRACKET }                  (* Left bracket *)
-| ']'      { RBRACKET }                  (* Right bracket *)
-| "<>"     { LKITE }                     (* Opening Kite *)
-| "</>"    { RKITE }                     (* Closing Kite *)
-| ';'      { SEMICOLON }                 (* semicolons *)
-| ','      { COMMA }                     (* commas *)
+| "/*"     { comment lexbuf }           (* Comments *)
+| '('      { LPAREN }
+| ')'      { RPAREN }
+| '{'      { LBRACE }
+| '}'      { RBRACE }
+| '['      { LBRACKET }
+| ']'      { RBRACKET }
+| ';'      { SEMI }
+| ':'      { COLON }
+| ','      { COMMA }
 | '+'      { PLUS }
 | '-'      { MINUS }
 | '*'      { TIMES }
 | '/'      { DIVIDE }
 | '='      { ASSIGN }
-(* | '\n'     { EOL } *)
+| '\n'     { EOL }
 | "=="     { EQ }
 | "!="     { NEQ }
 | "<"      { LT }
 | "<="     { LEQ }
 | ">"      { GT }
 | ">="     { GEQ }
-| "AND"    { AND }
-| "OR"     { OR }
+| "&&"     { AND }
+| "||"     { OR }
 | "!"      { NOT }
-| "def"    { FUNCTION }
-(* | "if"     { IF }
-| "elseif" { ELSEIF }
+| "function"    { FUNCTION }
+| "end"    { END }
+| "if"     { IF }
 | "else"   { ELSE }
-| "for"    { FOR }
-| "while"  { WHILE } *)
+| "FOR each"    { FOR }
+| "while"  { WHILE }
 | "return" { RETURN }
-(* | "render" { RENDER } *)
 | "int"    { INT }
 | "bool"   { BOOL }
+| "float"  { FLOAT }
 | "void"   { VOID }
-| "string" { STRING }
-(* | "list"   { LIST }
-| "dict"   { DICTIONARY } *)
+| "str"    { STRING }
+| "list"   { LIST }
 | "True"   { BLIT(true)  }
 | "False"  { BLIT(false) }
 | digits as lxm { LITERAL(int_of_string lxm) }
+| digits '.'  digit* ( ['e' 'E'] ['+' '-']? digits )? as lxm { FLIT(lxm) }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*     as lxm { ID(lxm) }
-(* | string   { STRING_LITERAL } *)
+| string            { STRING_LITERAL( (unescape s) ) }
 | eof { EOF }
-| _ as char { raise (Failure("illegal character " ^ Char.escaped char)) } (* Error checking to make sure this char is recognized by our lang *)
+| _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
 
 and comment = parse
   "*/" { token lexbuf }
