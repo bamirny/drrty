@@ -1,10 +1,10 @@
-function int letter(){
+def int letter(){
   int a;
   a = 18;
   return a;
 }
 
-function int main(){
+def int main(){
   print(letter());
   makeHeader("Hello!");
   makeText("DRRTY's first program!");

@@ -1,4 +1,4 @@
-function int main(){
+def int main(){
   makeHeader("Hello!");
   makeText("DRRTY's first program!");
   return 0;

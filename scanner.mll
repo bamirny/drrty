@@ -40,11 +40,11 @@ rule token = parse
 | "&&"     { AND }
 | "||"     { OR }
 | "!"      { NOT }
-| "function"    { FUNCTION }
+| "def"    { FUNCTION }
 | "end"    { END }
 | "if"     { IF }
 | "else"   { ELSE }
-| "FOR each"    { FOR }
+| "for"    { FOR }
 | "while"  { WHILE }
 | "return" { RETURN }
 | "int"    { INT }
