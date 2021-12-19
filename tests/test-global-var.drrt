@@ -1,0 +1,7 @@
+int x;
+int y;
+
+def int main() {
+	int z = x+y;
+	return z;
+}	

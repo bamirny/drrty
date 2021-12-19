@@ -1,0 +1,7 @@
+### Starting build.
+# Target: drrty.ml.depends, tags: { package(llvm), package(llvm.analysis), package(llvm.bitreader), warn(+a-4), extension:ml, file:drrty.ml, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -package llvm -package llvm.analysis -package llvm.bitreader -modules drrty.ml > drrty.ml.depends
++ ocamlfind ocamldep -package llvm -package llvm.analysis -package llvm.bitreader -modules drrty.ml > drrty.ml.depends
+ocamlfind: Package `llvm' not found
+Command exited with code 2.
+# Compilation unsuccessful.

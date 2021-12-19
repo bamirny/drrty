@@ -1,0 +1,6 @@
+def int main(){
+	html hi = <> <div> "Hello There" </div> </>;
+	print(hi);
+	
+	return 0;
+}

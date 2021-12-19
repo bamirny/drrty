@@ -1,0 +1,4 @@
+def int main(){
+	html mal = <> <p> 7 </div> </>
+	return 0;
+}

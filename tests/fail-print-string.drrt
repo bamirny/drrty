@@ -1,0 +1,4 @@
+def int main(){
+	prints(Hello); /* invalid input string */
+	return 0;
+}

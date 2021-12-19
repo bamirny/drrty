@@ -1,0 +1,10 @@
+def int main(){
+	int x = 30;
+	bool isTrue = True;
+	str s = "Hello"
+	html h = <> <div> "Hello" </div> </>
+	List L1 = [1,2,3]
+	
+	return 0
+
+}

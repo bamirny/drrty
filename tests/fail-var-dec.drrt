@@ -1,0 +1,4 @@
+def int main() {
+	a = "Hello there" ; /*no variable declaration */
+	prints(a); 
+}

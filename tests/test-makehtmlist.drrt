@@ -1,0 +1,17 @@
+def void makeList(List l1) {
+	html unlist;
+	html listitem;
+
+	for (int i = 0; i<length(l1) ; i=i+1) {
+		listitem = <> <li> {l1[i]} </li> </>
+ 	}
+	unlisted = <> <ul> {listitem} </ul> </>
+}
+
+def int main() {
+	List names =["Rania", "Trinity", "Dylan", "Richard"];
+	makeList(names);
+
+
+	return 0; 
+}

@@ -1,0 +1,9 @@
+def int main() {
+	int i = 5;
+	str s = "6";
+
+	print(i - s);
+
+	return 0;
+
+}

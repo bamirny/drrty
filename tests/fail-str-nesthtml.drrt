@@ -1,0 +1,8 @@
+def int main() {
+	html hi = <> <div> Hello There </div> </>;
+	/* Denote string within html with quotes */
+	print(hi);
+	return 0;
+}
+
+

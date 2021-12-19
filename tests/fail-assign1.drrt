@@ -1,0 +1,10 @@
+def int main(){
+	int x;
+	bool y;
+
+	x = True;
+	y = 3;
+
+	return 0;
+}
+

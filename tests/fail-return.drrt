@@ -1,0 +1,9 @@
+def int letter(){
+	str s = "hello"
+	return s;  /*return type does not match what is defined
+}
+
+def int main(){
+	return letter(); /* return type also does not match */
+
+}
