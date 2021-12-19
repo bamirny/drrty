@@ -1,4 +1,4 @@
-function int main(){
+def int main(){
     str a; 
     a = "hello world"; 
     html val;
@@ -18,7 +18,7 @@ Malformed:
 LKITE LTAG RTAG RKITE
 
 
-<div> <h1> "Hello they're" </h1> </div> <--- Must use quotes to denote a string within HTML
+<div> <h1> "Hello there" </h1> </div> <--- Must use quotes to denote a string within HTML
 LTAG LTAG STRINGLIT RTAG RTAG 
 
 

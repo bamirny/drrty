@@ -1,5 +1,5 @@
 
-function int main(){
+def int main(){
 
     if( True ){ 
         prints("Hello world"); 

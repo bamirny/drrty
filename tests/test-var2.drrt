@@ -1,4 +1,4 @@
-function int main(){
+def int main(){
   int a;
   a = 20;
   print(a);
