@@ -5,7 +5,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 
 type uop = Neg | Not
 
-type typ = Int | Bool | Float | Void | String | List of typ
+type typ = Int | Bool | Float | Void | String | List of typ | HNode of typ
 
 type bind = typ * string
 
@@ -123,6 +123,7 @@ let rec string_of_typ = function
   | Void -> "void"
   | String -> "str"
   | List(t) -> "list[" ^ string_of_typ t ^ "]"
+  | HNode(t) -> "hnode<" ^ string_of_typ t ^ ">" 
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 

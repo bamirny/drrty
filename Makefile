@@ -5,14 +5,18 @@ test : all testall.sh
 	./testall.sh
 
 .PHONY : all
-all : drrty.native
+all : drrty.native htmltree.o htmltree.bc
 
 drrty.native :
 	opam config exec -- \
 	rm -f *.o
-	ocamlbuild -use-ocamlfind -pkgs llvm.bitreader drrty.native
+	ocamlbuild -use-ocamlfind -pkgs llvm,llvm.analysis,llvm.bitreader drrty.native
 
-# "make clean" removes all generated files
+htmltree: htmltree.c
+	cc -o htmltree -DBUILD_TEST htmltree.c
+
+htmltree.bc : htmltree.c
+	clang-10 -emit-llvm -o htmltree.bc -c htmltree.c
 
 .PHONY : clean
 clean :
@@ -20,11 +24,8 @@ clean :
 	rm -rf testall.log *.diff drrty scanner.ml parser.ml parser.mli
 	rm -rf *.cmx *.cmi *.cmo *.cmx *.ll *.html
 	rm -rf *.err *.out *.exe *.s
-	rm -f *.o
+	rm -f *.o *.bc
 
-# Testing the "printbig" example
-
-# Building the tarball
 
 TESTS = \
 	add1 arith1 arith2 arith3 fib float1 float2 float3 for1 for2 func1 func3 func4 \

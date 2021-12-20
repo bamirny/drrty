@@ -22,6 +22,9 @@ module StringMap = Map.Make(String)
 let translate (globals, functions) =
   let context    = L.global_context () in
 
+  let llmem_html = L.MemoryBuffer.of_file "htmltree.bc" in
+  let llm_html = Llvm_bitreader.parse_bitcode context llmem_html in
+
   (* Create the LLVM compilation module into which
      we will generate code *)
   let the_module = L.create_module context "DRRTY" in
@@ -35,6 +38,10 @@ let translate (globals, functions) =
   and void_t     = L.void_type   context
   and list_t t   = L.struct_type context [| L.pointer_type (L.i32_type context); (L.pointer_type t) |]
   and ptr_list_t t = L.pointer_type (L.struct_type context [| L.pointer_type (L.i32_type context); (L.pointer_type t) |])
+  and htmlnode_t  = L.pointer_type 
+    (match L.type_by_name llm_html "struct.htmlnode" with
+      None -> raise (Failure "error: missing implementation for struct htmlnode")
+    | Some t -> t)
   
   in
 
@@ -45,17 +52,17 @@ let translate (globals, functions) =
     | A.Float -> float_t
     | A.Void  -> void_t
     | A.String -> string_t
+    | A.HNode _   -> htmlnode_t
     | A.List(t) -> list_t (ltype_of_typ t)
-  
   in
 
-  let str_of_typ t = match t with
+  let rec str_of_typ t = match t with
       A.Int -> "int"
     | A.Bool -> "bool"
     | A.Float -> "float"
     | A.String -> "str"
+    | A.HNode(t) -> "<htmlnode>" ^ str_of_typ t ^ "<htmlnode>"
     | _ -> raise (Failure "Invalid type")
-
   in
 
   (* Create a map of global variables after creating each *)
@@ -71,6 +78,17 @@ let translate (globals, functions) =
     L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue =
     L.declare_function "printf" printf_t the_module in
+
+
+  (* BUILD HTML TREE FUNCTION *)
+  let buildnode_t : L.lltype = 
+      L.function_type htmlnode_t [|string_t; htmlnode_t; htmlnode_t |] in
+  let buildnode_f : L.llvalue =
+      L.declare_function "buildnode" buildnode_t the_module in
+  let printtree_t : L.lltype = 
+      L.function_type void_t [| htmlnode_t |] in
+  let printtree_f : L.llvalue =
+      L.declare_function "printtree" printtree_t the_module in
 
   (* LLVM insists each basic block end with exactly one "terminator"
     instruction that transfers control.  This function runs "instr builder"
@@ -585,6 +603,7 @@ let translate (globals, functions) =
         L.build_load new_list_ptr "new_list" builder
       | SListIndex (list_type, id, e) ->
         L.build_call (StringMap.find (str_of_typ list_type) index) [| (lookup id); (expr builder e) |] "index" builder
+
       | SListLit (list_type, literals) ->
           let ltype = (ltype_of_typ list_type) in
           let new_list_ptr = L.build_alloca (list_t ltype) "new_list_ptr" builder in
@@ -594,8 +613,10 @@ let translate (globals, functions) =
           in
           let _ = List.rev (List.map map_func literals) in
           L.build_load new_list_ptr "new_list" builder
+
       | SCall ("print", [e]) | SCall ("printb", [e]) ->
         L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder
+
       | SCall ("prints", [e]) ->
         L.build_call printf_func [| string_format_str ; (expr builder e) |] "printf" builder
       | SCall ("makeHeader", [e]) ->
