@@ -95,6 +95,13 @@ let check (globals, functions) =
       with Not_found -> raise (Failure ("undeclared identifier " ^ s))
     in
 
+    let check_list_type id =
+      match (type_of_identifier id) with
+        List t -> t
+      | t -> raise  (Failure ("invalid list type: " ^ string_of_typ t))
+
+    in
+
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr = function
         Literal  l -> (Int, SLiteral l)
@@ -133,10 +140,39 @@ let check (globals, functions) =
                      when same && (t1 = Int || t1 = Float) -> Bool
           | And | Or when same && t1 = Bool -> Bool
           | _ -> raise (
-	      Failure ("illegal binary operator " ^
-                       string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
-                       string_of_typ t2 ^ " in " ^ string_of_expr e))
-          in (ty, SBinop((t1, e1'), op, (t2, e2')))
+	          Failure ("illegal binary operator " ^
+                string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
+                string_of_typ t2 ^ " in " ^ string_of_expr e))
+            in (ty, SBinop((t1, e1'), op, (t2, e2')))
+      | ListGet(var, e) -> 
+        let (t, e') = expr e in
+        let ty = match t with 
+            Int -> Int
+            | _ -> raise (Failure ("expected type int for index, not " ^ string_of_typ t)) 
+        in let list_type = check_list_type var
+        in (list_type, SListGet(list_type, var, (ty, e')))
+      | ListPop var -> 
+        let list_type = check_list_type var
+        in (list_type, SListPop(list_type, var))
+      | ListLength var -> 
+          (Int, SListLength(check_list_type var, var))
+      | ListSlice(var, e1, e2) ->
+          let e1' = expr e1 
+          and e2' = expr e2 in
+          let _ = match (fst e1', fst e2') with
+              (Int, Int) 
+            | (Void, Int) 
+            | (Int, Void)
+            | (Void, Void) -> Int
+            |  _ -> raise (Failure ("invalid indices for list slice: " ^ string_of_sexpr e1' ^ ", " ^ string_of_sexpr e2'))
+          in (type_of_identifier var, SListSlice(check_list_type var, var, e1', e2'))
+      | ListIndex(var, e) ->
+        let (t, e') = expr e in
+        (Int, SListIndex(check_list_type var, var, (t, e')))
+      | ListLit vals ->
+        let (t', _) = expr (List.hd vals) in
+        let map_func lit = expr lit in
+        let vals' = List.map map_func vals in (List t', SListLit(t', vals'))
       | Call(fname, args) as call ->
           let fd = find_func fname in
           let param_length = List.length fd.formals in
@@ -159,17 +195,45 @@ let check (globals, functions) =
       in if t' != Bool then raise (Failure err) else (t', e')
     in
 
+    let check_int_expr e = 
+      let (t', e') = expr e
+      and err = "expected Integer expression in " ^ string_of_expr e
+      in if t' != Int then raise (Failure err) else (t', e')
+      
+    in
+
+    let check_match_list_type_expr l e =
+      let (t', e') as e'' = expr e
+    in let err = "incompatible list and expression types: " ^ (string_of_typ t') ^ ", " ^ (string_of_sexpr e'') in
+    if t' != (check_list_type l) then raise (Failure err) else (t', e') 
+  
+    in
+
     (* Return a semantically-checked statement i.e. containing sexprs *)
     let rec check_stmt = function
         Expr e -> SExpr (expr e)
+      | ListAppend(var, e) -> 
+        let _ = check_list_type var in
+        SListAppend(var, check_match_list_type_expr var e)
+      | ListSet(var, e1, e2) ->
+          SListSet(check_list_type var, var, check_int_expr e1, check_match_list_type_expr var e2)
+      | ListClear var ->
+          SListClear(check_list_type var, var)
+      | ListRemove (var, e) ->
+          let _ = check_list_type var in
+          SListRemove(var, check_match_list_type_expr var e)
+      | ListInsert (var, e1, e2) ->
+          let _ = check_list_type var in
+          SListInsert(var, check_int_expr e1, check_match_list_type_expr var e2)
+      | ListReverse var -> 
+          SListReverse(check_list_type var, var)
       | If(p, b1, b2) -> SIf(check_bool_expr p, check_stmt b1, check_stmt b2)
-      | For(e1, e2, e3, st) ->
-	  SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
+      | For(e1, e2, e3, st) -> SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
       | While(p, s) -> SWhile(check_bool_expr p, check_stmt s)
       | Return e -> let (t, e') = expr e in
         if t = func.typ then SReturn (t, e')
         else raise (
-	  Failure ("output gives " ^ string_of_typ t ^ " expected " ^
+	        Failure ("output gives " ^ string_of_typ t ^ " expected " ^
 		   string_of_typ func.typ ^ " in " ^ string_of_expr e))
 
 	    (* A block is correct if each statement is correct and nothing
