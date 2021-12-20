@@ -1,12 +1,19 @@
 ### Starting build.
 # Target: drrty.ml.depends, tags: { package(llvm), package(llvm.analysis), package(llvm.bitreader), warn(+a-4), extension:ml, file:drrty.ml, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package llvm -package llvm.analysis -package llvm.bitreader -modules drrty.ml > drrty.ml.depends
+ocamlfind ocamldep -package llvm -package llvm.analysis -package llvm.bitreader -modules drrty.ml > drrty.ml.depends # cached
 # Target: ast.ml.depends, tags: { package(llvm), package(llvm.analysis), package(llvm.bitreader), warn(+a-4), extension:ml, file:ast.ml, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package llvm -package llvm.analysis -package llvm.bitreader -modules ast.ml > ast.ml.depends
+ocamlfind ocamldep -package llvm -package llvm.analysis -package llvm.bitreader -modules ast.ml > ast.ml.depends # cached
+# Target: ast.cmo, tags: { package(llvm), package(llvm.analysis), package(llvm.bitreader), warn(+a-4), byte, compile, extension:cmo, extension:ml, file:ast.cmo, file:ast.ml, implem, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -w +a-4 -package llvm -package llvm.analysis -package llvm.bitreader -o ast.cmo ast.ml # cached
 # Target: codegen.ml.depends, tags: { package(llvm), package(llvm.analysis), package(llvm.bitreader), warn(+a-4), extension:ml, file:codegen.ml, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package llvm -package llvm.analysis -package llvm.bitreader -modules codegen.ml > codegen.ml.depends
-+ ocamlfind ocamldep -package llvm -package llvm.analysis -package llvm.bitreader -modules codegen.ml > codegen.ml.depends
-File "codegen.ml", line 37, characters 4-6:
-Error: Syntax error
+ocamlfind ocamldep -package llvm -package llvm.analysis -package llvm.bitreader -modules codegen.ml > codegen.ml.depends # cached
+# Target: sast.ml.depends, tags: { package(llvm), package(llvm.analysis), package(llvm.bitreader), warn(+a-4), extension:ml, file:sast.ml, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -package llvm -package llvm.analysis -package llvm.bitreader -modules sast.ml > sast.ml.depends # cached
+# Target: sast.cmo, tags: { package(llvm), package(llvm.analysis), package(llvm.bitreader), warn(+a-4), byte, compile, extension:cmo, extension:ml, file:sast.cmo, file:sast.ml, implem, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -w +a-4 -package llvm -package llvm.analysis -package llvm.bitreader -o sast.cmo sast.ml
++ ocamlfind ocamlc -c -w +a-4 -package llvm -package llvm.analysis -package llvm.bitreader -o sast.cmo sast.ml
+File "sast.ml", line 77, characters 4-9:
+Error: This variant pattern is expected to have type sx
+       The constructor SHtml does not belong to type sx
 Command exited with code 2.
 # Compilation unsuccessful.

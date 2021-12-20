@@ -19,8 +19,12 @@ type expr =
   | Unop of uop * expr
   | Assign of string * expr
   | Call of string * expr list
-  | Seq of expr list (*ADDED SEQ*)
-  | Html of string
+  | ListGet of string * expr
+  | ListLength of string
+  | ListPop of string
+  | ListIndex of string * expr
+  | ListSlice of string * expr * expr
+  | ListLit of expr list
   | Noexpr
 
 type html = 
@@ -37,6 +41,12 @@ type stmt =
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
   | While of expr * stmt
+  | ListAppend of string * expr
+  | ListSet of string * expr * expr
+  | ListClear of string
+  | ListRemove of string * expr
+  | ListInsert of string * expr * expr
+  | ListReverse of string
 
 type func_decl = {
     typ : typ;
@@ -72,19 +82,21 @@ let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Fliteral(l) -> l
   | StringLit s -> "\"" ^ s ^ "\""
+  | ListGet(id, e) -> "get " ^ id ^ ", " ^ (string_of_expr e)
+  | ListPop(id) -> "pop " ^ id
+  | ListLength(id) -> "length " ^ id
+  | ListSlice(id, e1, e2) -> "slice " ^ id ^ ", " ^ (string_of_expr e1) ^ ", " ^ (string_of_expr e2)
+  | ListIndex(id, e) -> "index " ^ id ^ ", " ^ (string_of_expr e)
+  | ListLit(_) -> "list literal"
   | BoolLit(true) -> "True"
   | BoolLit(false) -> "False"
   | Id(s) -> s
-  | Binop(e1, o, e2) ->
-      string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
+  | Binop(e1, o, e2) -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop(o, e) -> string_of_uop o ^ string_of_expr e
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
-  | Call(f, el) ->
-    f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
-  | Seq(s) -> string_of_list s (*ADDED SEQ*)
-  (* | HSeq(s) -> string_of_list s  *)
-  | Html(s) -> s (*should output html*)
+  | Call(f, el) -> f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""
+
   and string_of_list = function
       l -> "[" ^ (string_of_seq l) ^ "]"
   and string_of_seq = function
@@ -114,6 +126,12 @@ let rec string_of_stmt = function
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
+  | ListAppend(id, e) -> "append " ^ id ^ ", " ^ string_of_expr e
+  | ListSet(id, e1, e2) -> "set " ^ id ^ ", " ^ (string_of_expr e1) ^ ", " ^ (string_of_expr e2)
+  | ListClear(id) -> "clear " ^ id
+  | ListRemove(id, e) -> "remove " ^ id ^ ", " ^ (string_of_expr e)
+  | ListInsert(id, e1, e2) -> "insert " ^ id ^ ", " ^ (string_of_expr e1) ^ ", " ^ (string_of_expr e2)
+  | ListReverse(id) -> "reverse " ^ id
 
 let rec string_of_typ = function
     Int -> "int"
@@ -121,13 +139,12 @@ let rec string_of_typ = function
   | Float -> "float"
   | Void -> "void"
   | String -> "str"
-  | List(t) -> "List(" ^ string_of_typ t ^ ")"
-  | Html -> "html"  (* will need to change on how we want string to look *)
+  | List(t) -> "list[" ^ string_of_typ t ^ "]"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 
 let string_of_fdecl fdecl =
-  "function " ^ string_of_typ fdecl.typ ^ " " ^
+  "def " ^ string_of_typ fdecl.typ ^ " " ^
   fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
   ")\n:\n" ^
   String.concat "" (List.map string_of_vdecl fdecl.locals) ^
