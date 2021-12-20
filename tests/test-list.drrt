@@ -1,0 +1,6 @@
+def int main(){
+    list[str] names;
+    names = ["Dylan", "Richard", "Rania", "Trinity"];
+    append(names, "Edwards");
+    prints(names[4]);
+}

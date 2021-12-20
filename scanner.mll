@@ -52,7 +52,18 @@ rule token = parse
 | "float"  { FLOAT }
 | "void"   { VOID }
 | "str"    { STRING }
-| "list"   { LIST }
+| "append" { LISTAPPEND }
+| "get"    { LISTGET}
+| "set"    { LISTSET }
+| "pop"    { LISTPOP }
+| "length" { LISTLENGTH }
+| "slice"  { LISTSLICE }
+| "clear"  { LISTCLEAR }
+| "reverse" { LISTREVERSE }
+| "insert"  { LISTINSERT }
+| "remove"  { LISTREMOVE }
+| "index"   { LISTINDEX}
+| "list"    { LIST }
 | "True"   { BLIT(true)  }
 | "False"  { BLIT(false) }
 | digits as lxm { LITERAL(int_of_string lxm) }
