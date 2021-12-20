@@ -1,7 +1,12 @@
 ### Starting build.
 # Target: drrty.ml.depends, tags: { package(llvm), package(llvm.analysis), package(llvm.bitreader), warn(+a-4), extension:ml, file:drrty.ml, ocaml, ocamldep, quiet, traverse }
 ocamlfind ocamldep -package llvm -package llvm.analysis -package llvm.bitreader -modules drrty.ml > drrty.ml.depends
-+ ocamlfind ocamldep -package llvm -package llvm.analysis -package llvm.bitreader -modules drrty.ml > drrty.ml.depends
-ocamlfind: Package `llvm' not found
+# Target: ast.ml.depends, tags: { package(llvm), package(llvm.analysis), package(llvm.bitreader), warn(+a-4), extension:ml, file:ast.ml, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -package llvm -package llvm.analysis -package llvm.bitreader -modules ast.ml > ast.ml.depends
+# Target: codegen.ml.depends, tags: { package(llvm), package(llvm.analysis), package(llvm.bitreader), warn(+a-4), extension:ml, file:codegen.ml, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -package llvm -package llvm.analysis -package llvm.bitreader -modules codegen.ml > codegen.ml.depends
++ ocamlfind ocamldep -package llvm -package llvm.analysis -package llvm.bitreader -modules codegen.ml > codegen.ml.depends
+File "codegen.ml", line 37, characters 4-6:
+Error: Syntax error
 Command exited with code 2.
 # Compilation unsuccessful.
