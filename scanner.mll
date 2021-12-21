@@ -52,14 +52,13 @@ rule token = parse
 | "float"  { FLOAT }
 | "void"   { VOID }
 | "str"    { STRING }
-| "append" { LISTAPPEND }
+| "add" { LISTADD }
 | "get"    { LISTGET}
 | "set"    { LISTSET }
 | "pop"    { LISTPOP }
 | "length" { LISTLENGTH }
 | "slice"  { LISTSLICE }
 | "clear"  { LISTCLEAR }
-| "reverse" { LISTREVERSE }
 | "insert"  { LISTINSERT }
 | "remove"  { LISTREMOVE }
 | "index"   { LISTINDEX}

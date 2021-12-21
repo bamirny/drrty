@@ -8,7 +8,7 @@ open Ast
 %token PLUS MINUS TIMES DIVIDE ASSIGN
 %token NOT EQ NEQ LT LEQ GT GEQ AND OR EOL
 %token FUNCTION END RETURN IF ELSE FOR WHILE INT BOOL FLOAT LIST VOID STRING
-%token LISTAPPEND LISTGET LISTSET LISTPOP LISTLENGTH LISTSLICE LISTCLEAR LISTREVERSE LISTINSERT LISTREMOVE LISTINDEX
+%token LISTADD LISTGET LISTSET LISTPOP LISTLENGTH LISTSLICE LISTCLEAR LISTREVERSE LISTINSERT LISTREMOVE LISTINDEX
 %token <int> LITERAL
 %token <bool> BLIT
 %token <string> ID FLIT STRING_LITERAL
@@ -85,13 +85,12 @@ stmt:
   | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt { For($3, $5, $7, $9)   }
   | WHILE LPAREN expr RPAREN stmt                           { While($3, $5) }
 
-  | LISTAPPEND LPAREN ID COMMA expr RPAREN SEMI            { ListAppend($3, $5) }
+  | LISTADD LPAREN ID COMMA expr RPAREN SEMI               { ListAdd($3, $5) }
   | LISTSET LPAREN ID COMMA expr COMMA expr RPAREN SEMI    { ListSet($3, $5, $7) }
   | ID LBRACKET expr RBRACKET ASSIGN expr SEMI             { ListSet($1, $3, $6) }
   | LISTCLEAR LPAREN ID RPAREN SEMI                        { ListClear($3) }
   | LISTREMOVE LPAREN ID COMMA expr RPAREN SEMI            { ListRemove($3, $5) }  
   | LISTINSERT LPAREN ID COMMA expr COMMA expr RPAREN SEMI { ListInsert($3, $5, $7) }
-  | LISTREVERSE LPAREN ID RPAREN SEMI                      { ListReverse($3) }
 
 expr_opt:
     /* nothing */ { Noexpr }

@@ -34,12 +34,11 @@ type stmt =
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
   | While of expr * stmt
-  | ListAppend of string * expr
+  | ListAdd of string * expr
   | ListSet of string * expr * expr
   | ListClear of string
   | ListRemove of string * expr
   | ListInsert of string * expr * expr
-  | ListReverse of string
 
 type func_decl = {
     typ : typ;
@@ -109,12 +108,11 @@ let rec string_of_stmt = function
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-  | ListAppend(id, e) -> "append " ^ id ^ ", " ^ string_of_expr e
+  | ListAdd(id, e) -> "add " ^ id ^ ", " ^ string_of_expr e
   | ListSet(id, e1, e2) -> "set " ^ id ^ ", " ^ (string_of_expr e1) ^ ", " ^ (string_of_expr e2)
   | ListClear(id) -> "clear " ^ id
   | ListRemove(id, e) -> "remove " ^ id ^ ", " ^ (string_of_expr e)
   | ListInsert(id, e1, e2) -> "insert " ^ id ^ ", " ^ (string_of_expr e1) ^ ", " ^ (string_of_expr e2)
-  | ListReverse(id) -> "reverse " ^ id
 
 let rec string_of_typ = function
     Int -> "int"

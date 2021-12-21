@@ -136,7 +136,7 @@ let translate (globals, functions) =
          StringMap.add def_name def m in
     List.fold_left get_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
   
-    (* set() *)
+    (* set() WORKING*)
     let set_val : L.llvalue StringMap.t = 
       let set_val_ty m typ =
        let ltype = (ltype_of_typ typ) in 
@@ -154,12 +154,12 @@ let translate (globals, functions) =
        StringMap.add def_name def m in 
     List.fold_left set_val_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
   
-    (* append() *)
-    let append_val : L.llvalue StringMap.t = 
-      let append_val_ty m typ =
+    (* add() WORKING *)
+    let add_val : L.llvalue StringMap.t = 
+      let add_val_ty m typ =
        let ltype = (ltype_of_typ typ) in 
        let def_name = (str_of_typ typ) in
-       let def = L.define_function ("append" ^ def_name) (L.function_type void_t [| L.pointer_type (list_t ltype); ltype |]) the_module in
+       let def = L.define_function ("add" ^ def_name) (L.function_type void_t [| L.pointer_type (list_t ltype); ltype |]) the_module in
        let build = L.builder_at_end context (L.entry_block def) in
        let list_ptr = L.build_alloca (L.pointer_type (list_t ltype)) "list_ptr_alloc" build in
        ignore(L.build_store (L.param def 0) list_ptr build);
@@ -178,9 +178,9 @@ let translate (globals, functions) =
        let _ = L.build_store (L.build_load valPtr "val" build) next_element_ptr build in
        let _ = L.build_ret_void build in
        StringMap.add def_name def m in 
-    List.fold_left append_val_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
+    List.fold_left add_val_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
   
-    (* pop() *)
+    (* pop() WORKING *)
     let pop : L.llvalue StringMap.t = 
       let pop_ty m typ =
          let ltype = (ltype_of_typ typ) in 
@@ -203,7 +203,7 @@ let translate (globals, functions) =
       StringMap.add def_name def m in
     List.fold_left pop_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
   
-    (* length() *)
+    (* length() WORKING *)
     let length : L.llvalue StringMap.t = 
       let length_ty m typ =
        let ltype = (ltype_of_typ typ) in 
@@ -268,7 +268,7 @@ let translate (globals, functions) =
              let to_index = L.build_load loop_cnt_ptr "to_idx" _builder in
              let from_index = L.build_add to_index idx1 "from_idx" _builder in
              let get_val = L.build_call (StringMap.find (str_of_typ typ) get) [| list_ptr; from_index |] "get" _builder in
-             let _ = L.build_call (StringMap.find (str_of_typ typ) append_val) [| list_ptr2; get_val |] "" _builder in
+             let _ = L.build_call (StringMap.find (str_of_typ typ) add_val) [| list_ptr2; get_val |] "" _builder in
              let index_incr = L.build_add (L.build_load loop_cnt_ptr "loop_cnt" _builder) (L.const_int i32_t 1) "loop_itr" _builder in
              let _ = L.build_store index_incr loop_cnt_ptr _builder in 
              _builder
@@ -417,47 +417,6 @@ let translate (globals, functions) =
        StringMap.add def_name def m in 
     List.fold_left insert_ty StringMap.empty [ A.Bool; A.Int; A.Float ] in
   
-   (* reverse() *)
-    let reverse : L.llvalue StringMap.t = 
-      let reverse_ty m typ =
-       let ltype = (ltype_of_typ typ) in 
-       let def_name = (str_of_typ typ) in
-       let def = L.define_function ("reverse" ^ def_name) (L.function_type void_t [| L.pointer_type (list_t ltype) |]) the_module in
-       let build = L.builder_at_end context (L.entry_block def) in
-  
-       let list_ptr = L.build_alloca (L.pointer_type (list_t ltype)) "list_ptr_alloc" build in
-       ignore(L.build_store (L.param def 0) list_ptr build);
-       let list_load = L.build_load list_ptr "list_load" build in
-  
-       let length_ptr_ptr = L.build_struct_gep list_load 0 "length_ptr_ptr" build in 
-       let length_ptr = L.build_load length_ptr_ptr "length_ptr" build in
-       let length = L.build_load length_ptr "length" build in
-  
-       let leftPtr = L.build_alloca i32_t "left_idx" build in 
-       let _ = L.build_store (L.const_int i32_t 0) leftPtr build in
-       let rightPtr = L.build_alloca i32_t "right_idx" build in
-       let _ = L.build_store (L.build_sub length (L.const_int i32_t 1) "tmp" build) rightPtr build in
-  
-       let while_cond _builder = L.build_icmp L.Icmp.Slt 
-          (L.build_load leftPtr "left_idx" _builder) 
-          (L.build_load rightPtr "right_idx" _builder) "while_cond" _builder 
-       in
-       let while_body _builder = 
-          let left_idx = (L.build_load leftPtr "left_idx" _builder) in
-          let right_idx = (L.build_load rightPtr "right_idx" _builder) in
-          let get_left_val = L.build_call (StringMap.find (str_of_typ typ) get) [| list_load; left_idx |] "get" _builder in
-          let get_right_val = L.build_call (StringMap.find (str_of_typ typ) get) [| list_load; right_idx |] "get" _builder in
-          let _ = L.build_call (StringMap.find (str_of_typ typ) set_val) [| list_load; left_idx; get_right_val |] "" _builder in
-          let _ = L.build_call (StringMap.find (str_of_typ typ) set_val) [| list_load; right_idx; get_left_val |] "" _builder in
-          let _ = L.build_store (L.build_add left_idx (L.const_int i32_t 1) "tmp" _builder) leftPtr _builder in
-          let _ = L.build_store (L.build_sub right_idx (L.const_int i32_t 1) "tmp" _builder) rightPtr _builder in
-          _builder
-        in
-        let while_builder = build_while build while_cond while_body def in
-        ignore(L.build_ret_void while_builder);
-        StringMap.add def_name def m in 
-    List.fold_left reverse_ty StringMap.empty [ A.Bool; A.Int; A.Float ] in
-
   (* LIST FUNCTIONS BUILT *)
 
   (* Define each function (arguments and return type) so we can
@@ -590,7 +549,7 @@ let translate (globals, functions) =
           let new_list_ptr = L.build_alloca (list_t ltype) "new_list_ptr" builder in
           let _ = init_list builder new_list_ptr list_type in
           let map_func literal = 
-            ignore(L.build_call (StringMap.find (str_of_typ list_type) append_val) [| new_list_ptr; (expr builder literal) |] "" builder);
+            ignore(L.build_call (StringMap.find (str_of_typ list_type) add_val) [| new_list_ptr; (expr builder literal) |] "" builder);
           in
           let _ = List.rev (List.map map_func literals) in
           L.build_load new_list_ptr "new_list" builder
@@ -625,8 +584,8 @@ let translate (globals, functions) =
 
     let rec stmt builder = function
         SBlock sl -> List.fold_left stmt builder sl
-      | SListAppend(id, e) -> 
-          ignore(L.build_call (StringMap.find (str_of_typ (fst e)) append_val) [| (lookup id); (expr builder e) |] "" builder); builder 
+      | SListAdd(id, e) -> 
+          ignore(L.build_call (StringMap.find (str_of_typ (fst e)) add_val) [| (lookup id); (expr builder e) |] "" builder); builder 
       | SListSet (list_type, id, e1, e2) ->
           ignore(L.build_call (StringMap.find (str_of_typ list_type) set_val) [| (lookup id); (expr builder e1); (expr builder e2) |] "" builder); builder
       | SListClear (list_type, id) ->
@@ -635,8 +594,6 @@ let translate (globals, functions) =
           ignore(L.build_call (StringMap.find (str_of_typ (fst e)) remove) [| (lookup id); (expr builder e) |] "" builder); builder
       | SListInsert (id, e1, e2) ->
           ignore(L.build_call (StringMap.find (str_of_typ (fst e2)) insert) [| (lookup id); (expr builder e1); (expr builder e2) |] "" builder); builder
-      | SListReverse (list_type, id) ->
-          ignore(L.build_call (StringMap.find (str_of_typ list_type) reverse) [| (lookup id) |] "" builder); builder
       | SExpr e -> ignore(expr builder e); builder
       | SReturn e -> ignore(match fdecl.styp with
           (* Special "return nothing" instr *)

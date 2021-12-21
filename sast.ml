@@ -28,12 +28,11 @@ type sstmt =
   | SIf of sexpr * sstmt * sstmt
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SWhile of sexpr * sstmt
-  | SListAppend of string * sexpr
+  | SListAdd of string * sexpr
   | SListSet of typ * string * sexpr * sexpr
   | SListClear of typ * string
   | SListRemove of string * sexpr
   | SListInsert of string * sexpr * sexpr
-  | SListReverse of typ * string
 
 type sfunc_decl = {
     styp : typ;
@@ -79,12 +78,11 @@ let rec string_of_sstmt = function
   | SIf(e, s1, s2) ->  "if (" ^ string_of_sexpr e ^ ")\n" ^ string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2
   | SFor(e1, e2, e3, s) -> "for (" ^ string_of_sexpr e1  ^ " ; " ^ string_of_sexpr e2 ^ " ; " ^ string_of_sexpr e3  ^ ") " ^ string_of_sstmt s
   | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
-  | SListAppend(id, e) -> "append " ^ id ^ ", " ^ string_of_sexpr e
+  | SListAdd(id, e) -> "add " ^ id ^ ", " ^ string_of_sexpr e
   | SListSet(_, id, e1, e2) -> "set " ^ id ^ ", " ^ (string_of_sexpr e1) ^ ", " ^ (string_of_sexpr e2)
   | SListClear(_, id) -> "clear " ^ id
   | SListRemove(id, e) -> "remove " ^ id ^ ", " ^ (string_of_sexpr e)
   | SListInsert(id, e1, e2) -> "insert " ^ id ^ ", " ^ (string_of_sexpr e1) ^ ", " ^ (string_of_sexpr e2)
-  | SListReverse(_, id) -> "reverse " ^ id
 
 let string_of_sfdecl fdecl =
   "def " ^ string_of_typ fdecl.styp ^ " " ^
