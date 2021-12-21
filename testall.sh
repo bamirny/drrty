@@ -96,7 +96,7 @@ Check() {
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.exe ${basename}.out ${basename}.html" &&
     Run "$DRRTY" "$1" ">" "${basename}.ll" &&
     Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
-    Run "$CC" "-o" "${basename}.exe" "${basename}.s" &&
+    Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" && 
     Run "./${basename}.exe" > "${basename}.out" &&
     Run "./${basename}.exe" > "${basename}.html" &&
     Compare ${basename}.out ${reffile}.out ${basename}.diff

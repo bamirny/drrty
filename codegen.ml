@@ -72,6 +72,11 @@ let translate (globals, functions) =
   let printf_func : L.llvalue =
     L.declare_function "printf" printf_t the_module in
 
+  let printbig_t : L.lltype =
+    L.function_type i32_t [| i32_t |] in
+  let printbig_func : L.llvalue =
+      L.declare_function "printbig" printbig_t the_module in
+
   (* LLVM insists each basic block end with exactly one "terminator"
     instruction that transfers control.  This function runs "instr builder"
     if the current block does not already have a terminator.  Used,
@@ -610,6 +615,10 @@ let translate (globals, functions) =
         L.build_call printf_func [| list_format_str ; (expr builder e) |] "printf" builder
       | SCall ("printf", [e]) ->
         L.build_call printf_func [| float_format_str ; (expr builder e) |] "printf" builder
+      
+      | SCall ("printbig", [e]) ->
+        L.build_call printbig_func [| (expr builder e) |] "printbig" builder
+
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (expr builder) (List.rev args)) in

@@ -5,14 +5,17 @@ test : all testall.sh
 	./testall.sh
 
 .PHONY : all
-all : drrty.native
+all : drrty.native printbig.o
 
 drrty.native :
 	opam config exec -- \
-	rm -f *.o
 	ocamlbuild -use-ocamlfind -pkgs llvm.bitreader drrty.native
 
 # "make clean" removes all generated files
+
+printbig : printbig.c
+	cc -o printbig -DBUILD_TEST printbig.c
+
 
 .PHONY : clean
 clean :

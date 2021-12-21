@@ -46,7 +46,8 @@ let check (globals, functions) =
                                ("makeSubheader", String);
                                ("makeText", String);
                                ("makeImage", String);
-                               ("makeList", String) ]
+                               ("makeList", String); 
+                               ("printbig", Int)]
   in
 
   (* Add function name to symbol table *)
