@@ -1,7 +1,7 @@
 int a;
 
 
-function int main(){
+def int main(){
   a = 30;
   print(a);
   makeHeader("Hello!");

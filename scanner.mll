@@ -44,11 +44,11 @@ rule token = parse
 | "&&"     { AND }
 | "||"     { OR }
 | "!"      { NOT }
-| "function"    { FUNCTION }
+| "def"    { FUNCTION }
 | "end"    { END }
 | "if"     { IF }
 | "else"   { ELSE }
-| "FOR each"    { FOR }
+| "for"    { FOR }
 | "while"  { WHILE }
 | "return" { RETURN }
 | "int"    { INT }
@@ -56,8 +56,18 @@ rule token = parse
 | "float"  { FLOAT }
 | "void"   { VOID }
 | "str"    { STRING }
-| "html"   { HTML  }
-| "list"   { LIST }
+| "append" { LISTAPPEND }
+| "get"    { LISTGET}
+| "set"    { LISTSET }
+| "pop"    { LISTPOP }
+| "length" { LISTLENGTH }
+| "slice"  { LISTSLICE }
+| "clear"  { LISTCLEAR }
+| "reverse" { LISTREVERSE }
+| "insert"  { LISTINSERT }
+| "remove"  { LISTREMOVE }
+| "index"   { LISTINDEX}
+| "list"    { LIST }
 | "True"   { BLIT(true)  }
 | "False"  { BLIT(false) }
 | digits as lxm { LITERAL(int_of_string lxm) }
