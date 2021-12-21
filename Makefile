@@ -5,18 +5,16 @@ test : all testall.sh
 	./testall.sh
 
 .PHONY : all
-all : drrty.native htmltree.o htmltree.bc
+all : drrty.native #htmltree.o 
 
 drrty.native :
 	opam config exec -- \
 	rm -f *.o
 	ocamlbuild -use-ocamlfind -pkgs llvm,llvm.analysis,llvm.bitreader drrty.native
 
-htmltree: htmltree.c
-	cc -o htmltree -DBUILD_TEST htmltree.c
+# htmltree: htmltree.c
+# 	cc -o htmltree -DBUILD_TEST htmltree.c
 
-htmltree.bc : htmltree.c
-	clang-10 -emit-llvm -o htmltree.bc -c htmltree.c
 
 .PHONY : clean
 clean :

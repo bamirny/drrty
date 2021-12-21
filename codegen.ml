@@ -81,14 +81,17 @@ let translate (globals, functions) =
 
 
   (* BUILD HTML TREE FUNCTION *)
-  let buildnode_t : L.lltype = 
+  (* let buildnode_t : L.lltype = 
       L.function_type htmlnode_t [|string_t; htmlnode_t; htmlnode_t |] in
   let buildnode_f : L.llvalue =
       L.declare_function "buildnode" buildnode_t the_module in
   let printtree_t : L.lltype = 
       L.function_type void_t [| htmlnode_t |] in
   let printtree_f : L.llvalue =
-      L.declare_function "printtree" printtree_t the_module in
+      L.declare_function "printtree" printtree_t the_module in *)
+
+
+
 
   (* LLVM insists each basic block end with exactly one "terminator"
     instruction that transfers control.  This function runs "instr builder"
@@ -631,6 +634,8 @@ let translate (globals, functions) =
         L.build_call printf_func [| list_format_str ; (expr builder e) |] "printf" builder
       | SCall ("printf", [e]) ->
         L.build_call printf_func [| float_format_str ; (expr builder e) |] "printf" builder
+   
+  
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (expr builder) (List.rev args)) in
