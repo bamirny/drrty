@@ -1,0 +1,22 @@
+
+.bigClass{
+    font: 700;
+    font-family: sans-serif;
+    color: white;
+    background-color: purple;
+    width: 150px;
+    height: 150px;
+    display: inline-block;
+}
+
+.smallClass{
+    font: 700;
+    font-family: sans-serif;
+    color: white;
+    background-color: white;
+    width: 150px;
+    height: 150px;
+
+    display: inline-block;
+
+}

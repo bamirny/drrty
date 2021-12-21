@@ -72,10 +72,15 @@ let translate (globals, functions) =
   let printf_func : L.llvalue =
     L.declare_function "printf" printf_t the_module in
 
-  let printbig_t : L.lltype =
-    L.function_type i32_t [| i32_t |] in
-  let printbig_func : L.llvalue =
-      L.declare_function "printbig" printbig_t the_module in
+  let createElement_t : L.lltype =
+    L.function_type i32_t [| string_t; string_t; string_t |] in
+  let createElement_func : L.llvalue =
+      L.declare_function "createElement" createElement_t the_module in
+
+  let createHTMLDocument_t : L.lltype =
+    L.function_type i32_t [| string_t |] in
+  let createHTMLDocument_func : L.llvalue =
+      L.declare_function "createHTMLDocument" createHTMLDocument_t the_module in
 
   (* LLVM insists each basic block end with exactly one "terminator"
     instruction that transfers control.  This function runs "instr builder"
@@ -616,8 +621,11 @@ let translate (globals, functions) =
       | SCall ("printf", [e]) ->
         L.build_call printf_func [| float_format_str ; (expr builder e) |] "printf" builder
       
-      | SCall ("printbig", [e]) ->
-        L.build_call printbig_func [| (expr builder e) |] "printbig" builder
+      | SCall ("createElement", [e1;e2;e3] ) ->
+        L.build_call createElement_func [| (expr builder e1); (expr builder e2);(expr builder e3) |] "createElement" builder
+      | SCall ("createHTMLDocument", [e] ) ->
+        L.build_call createHTMLDocument_func [| (expr builder e) |] "createHTMLDocument" builder
+
 
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in

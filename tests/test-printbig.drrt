@@ -1,6 +1,17 @@
 
 def int main(){
-  printbig(72);
+  int i;
+  int j;
+  createHTMLDocument("printbig.css");
+  for (i = 0; i < 100; i = i + 1){
+      if( j == 0){
+        createElement("div", "bigClass", ""); 
+        j = 1; 
+      }else{
+        createElement("div", "smallClass", "");  
+        j = 0;
+      }
+  }
   return 0;
 }
 

@@ -46,9 +46,18 @@ let check (globals, functions) =
                                ("makeSubheader", String);
                                ("makeText", String);
                                ("makeImage", String);
-                               ("makeList", String); 
-                               ("printbig", Int)]
+                               ("makeList", String);
+                               ("createHTMLDocument", String)]
   in
+
+  let built_in_decls =
+    StringMap.add "createElement" {
+      typ = String;
+      fname = "createElement";
+      formals = [(String, "str1"); (String, "str2");(String, "str3")];
+      locals = [];
+      body = [] } built_in_decls
+   in
 
   (* Add function name to symbol table *)
   let add_func map fd =
