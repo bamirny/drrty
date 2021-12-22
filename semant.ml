@@ -42,12 +42,12 @@ let check (globals, functions) =
 			                         ("printb", Bool);
 			                         ("printf", Float);
                                ("prints", String);
+                               ("createHTMLDocument", String);
+                               ("createHTML", String); 
                                ("makeHeader", String);
-                               ("makeSubheader", String);
                                ("makeText", String);
                                ("makeImage", String);
-                               ("makeList", String);
-                               ("createHTMLDocument", String)]
+                               ("makeInput", String)]
   in
 
   let built_in_decls =
