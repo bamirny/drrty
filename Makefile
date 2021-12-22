@@ -5,17 +5,23 @@ test : all testall.sh
 	./testall.sh
 
 .PHONY : all
-all : drrty.native htmllibrary.o
+all : drrty.native library.o htmllibrary.o
 
-drrty.native :
-	opam config exec -- \
-	ocamlbuild -use-ocamlfind -pkgs llvm.bitreader drrty.native
+library.bc: library.c
+	clang -emit-llvm -o library.bc -c library.c -Wno-varargs
 
-# "make clean" removes all generated files
+library: library.c
+	cc -o library -DBUILD_TEST library.c
 
 htmllibrary : htmllibrary.c
 	cc -o htmllibrary -DBUILD_TEST htmllibrary.c
 
+drrty.native :
+	opam config exec -- \
+	rm -f *.o
+	ocamlbuild -use-ocamlfind -pkgs llvm,llvm.analysis,llvm.bitreader drrty.native
+
+# "make clean" removes all generated files
 
 .PHONY : clean
 clean :

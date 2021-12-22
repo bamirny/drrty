@@ -19,11 +19,10 @@ type expr =
   | Unop of uop * expr
   | Assign of string * expr
   | Call of string * expr list
-  | ListGet of string * expr
-  | ListLength of string
-  | ListPop of string
-  | ListIndex of string * expr
-  | ListSlice of string * expr * expr
+  | ListLength of expr
+  | ListGet of expr * expr
+  | ListSet of expr * expr * expr
+  | ListAdd of expr * expr
   | ListLit of expr list
   | Noexpr
 
@@ -34,12 +33,7 @@ type stmt =
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
   | While of expr * stmt
-  | ListAppend of string * expr
-  | ListSet of string * expr * expr
-  | ListClear of string
-  | ListRemove of string * expr
-  | ListInsert of string * expr * expr
-  | ListReverse of string
+
 
 type func_decl = {
     typ : typ;
@@ -74,34 +68,26 @@ let string_of_uop = function
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Fliteral(l) -> l
-  | StringLit s -> "\"" ^ s ^ "\""
-  | ListGet(id, e) -> "get " ^ id ^ ", " ^ (string_of_expr e)
-  | ListPop(id) -> "pop " ^ id
-  | ListLength(id) -> "length " ^ id
-  | ListSlice(id, e1, e2) -> "slice " ^ id ^ ", " ^ (string_of_expr e1) ^ ", " ^ (string_of_expr e2)
-  | ListIndex(id, e) -> "index " ^ id ^ ", " ^ (string_of_expr e)
-  | ListLit(_) -> "list literal"
+  | StringLit s -> "\"" ^ s ^ "\"" 
+  | Id(s) -> s
   | BoolLit(true) -> "True"
   | BoolLit(false) -> "False"
-  | Id(s) -> s
   | Binop(e1, o, e2) -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop(o, e) -> string_of_uop o ^ string_of_expr e
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Call(f, el) -> f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
+  | ListLit(l) -> "[" ^ String.concat "," (List.map string_of_expr l) ^ "]"
+  | ListGet(l, idx) -> string_of_expr l ^ ".get(" ^ string_of_expr idx ^ ")"
+  | ListLength(l) -> string_of_expr l ^ ".length()"
+  | ListAdd(l, e) -> string_of_expr l ^ ".add(" ^ string_of_expr e ^ ")"
+  | ListSet(l, idx, e) -> string_of_expr l ^ ".set(" ^ string_of_expr idx ^ "," ^ string_of_expr e ^ ")"
   | Noexpr -> ""
-
-  and string_of_list = function
-      l -> "[" ^ (string_of_seq l) ^ "]"
-  and string_of_seq = function
-      x :: y :: a -> string_of_expr x ^ ", " ^ string_of_seq (y :: a)
-    | x :: _ -> string_of_expr x
-    | [] -> ""
 
 let rec string_of_stmt = function
     Block(stmts) ->
       "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
   | Expr(expr) -> string_of_expr expr ^ ";\n";
-  | Return(expr) -> "Return " ^ string_of_expr expr ^ ";\n";
+  | Return(expr) -> "return " ^ string_of_expr expr ^ ";\n";
   | If(e, s, Block([])) -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s
   | If(e, s1, s2) ->  "if (" ^ string_of_expr e ^ ")\n" ^
       string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
@@ -109,12 +95,6 @@ let rec string_of_stmt = function
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-  | ListAppend(id, e) -> "append " ^ id ^ ", " ^ string_of_expr e
-  | ListSet(id, e1, e2) -> "set " ^ id ^ ", " ^ (string_of_expr e1) ^ ", " ^ (string_of_expr e2)
-  | ListClear(id) -> "clear " ^ id
-  | ListRemove(id, e) -> "remove " ^ id ^ ", " ^ (string_of_expr e)
-  | ListInsert(id, e1, e2) -> "insert " ^ id ^ ", " ^ (string_of_expr e1) ^ ", " ^ (string_of_expr e2)
-  | ListReverse(id) -> "reverse " ^ id
 
 let rec string_of_typ = function
     Int -> "int"

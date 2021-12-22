@@ -10,6 +10,25 @@ module StringMap = Map.Make(String)
 
    Check each global variable, then check each function *)
 
+let get_typ(t, _) = t
+  let first_elem (l) = match l with
+      [] -> Void
+    | e :: _ -> get_typ(e)
+
+let check_list_typ m =
+  let (t, _) = m in 
+  match t with
+  List(ty) -> ty
+  | _ -> raise (Failure ("Invalid list type: " ^ string_of_typ t))
+
+(* Use this function to check if the sexpr is acceptable element in list*)
+let check_elem_typ = function
+        (Void,_) -> raise(Failure("Invalid element type"))
+  | _ -> ()
+
+let check_typ (e, t) = 
+  if e = t then () else raise (Failure ("Expression and type incompatible"))
+
 let check (globals, functions) =
 
   (* Verify a list of bindings has no none types or duplicate names *)
@@ -23,6 +42,20 @@ let check (globals, functions) =
 	  raise (Failure ("duplicate " ^ kind ^ " " ^ n1))
       | _ :: t -> dups t
     in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds)
+
+  in
+
+  let check_list_binds (binds : sexpr list) =
+    List.iter check_elem_typ binds;
+
+    let rec typ_match = function
+      [] -> ()
+    | ((t1,_) :: (t2,_) :: _) when t1 != t2 ->
+            raise (Failure ("Type of elements in list incosistent"))
+    | _ :: t -> typ_match t
+
+    in typ_match (List.sort (fun (a,_) (b,_) -> compare a b) binds);
+
   in
 
   (**** Check global variables ****)
@@ -44,6 +77,9 @@ let check (globals, functions) =
                                ("prints", String);
                                ("createHTMLDocument", String);
                                ("createHTML", String); 
+                               ("printl", List(Int));
+                               ("printl", List(Float));
+                               ("printl", List(String));
                                ("makeHeader", String);
                                ("makeText", String);
                                ("makeImage", String);
@@ -105,15 +141,21 @@ let check (globals, functions) =
       with Not_found -> raise (Failure ("undeclared identifier " ^ s))
     in
 
-    let check_list_type id =
-      match (type_of_identifier id) with
-        List t -> t
-      | t -> raise  (Failure ("invalid list type: " ^ string_of_typ t))
-
-    in
-
     (* Return a semantically-checked expression, i.e., with a type *)
-    let rec expr = function
+    let rec expr =
+      let check_list m =
+				let (t, _) = expr m in
+				match t with
+				List(_) -> ()
+			  | _ -> raise (Failure ("Invalid list, received: " ^ string_of_typ t)) in
+
+			let check_list_type m =
+				let (t, _) = expr m in
+				match t with
+				 List(ty) -> ty
+				|_ -> raise (Failure ("Invalid list type, received: " ^ string_of_typ t)) in
+      
+      function
         Literal  l -> (Int, SLiteral l)
       | Fliteral l -> (Float, SFliteral l)
       | BoolLit l  -> (Bool, SBoolLit l)
@@ -154,35 +196,26 @@ let check (globals, functions) =
                 string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                 string_of_typ t2 ^ " in " ^ string_of_expr e))
             in (ty, SBinop((t1, e1'), op, (t2, e2')))
-      | ListGet(var, e) -> 
-        let (t, e') = expr e in
-        let ty = match t with 
-            Int -> Int
-            | _ -> raise (Failure ("expected type int for index, not " ^ string_of_typ t)) 
-        in let list_type = check_list_type var
-        in (list_type, SListGet(list_type, var, (ty, e')))
-      | ListPop var -> 
-        let list_type = check_list_type var
-        in (list_type, SListPop(list_type, var))
-      | ListLength var -> 
-          (Int, SListLength(check_list_type var, var))
-      | ListSlice(var, e1, e2) ->
-          let e1' = expr e1 
-          and e2' = expr e2 in
-          let _ = match (fst e1', fst e2') with
-              (Int, Int) 
-            | (Void, Int) 
-            | (Int, Void)
-            | (Void, Void) -> Int
-            |  _ -> raise (Failure ("invalid indices for list slice: " ^ string_of_sexpr e1' ^ ", " ^ string_of_sexpr e2'))
-          in (type_of_identifier var, SListSlice(check_list_type var, var, e1', e2'))
-      | ListIndex(var, e) ->
-        let (t, e') = expr e in
-        (Int, SListIndex(check_list_type var, var, (t, e')))
-      | ListLit vals ->
-        let (t', _) = expr (List.hd vals) in
-        let map_func lit = expr lit in
-        let vals' = List.map map_func vals in (List t', SListLit(t', vals'))
+ 
+      | ListLength l -> check_list(l);
+        (Int, SListLength(expr l))
+
+      | ListGet(l, i) -> check_list(l);
+        check_typ(get_typ(expr i), Int);
+        (check_list_type(l), SListGet(expr l, expr i))
+
+      | ListSet(l, i, e) -> check_list(l);
+        check_typ(get_typ(expr i), Int);
+        check_elem_typ(expr e);
+        (check_list_type(l), SListSet (expr l, expr i, expr e))
+
+      | ListAdd(l, e) -> check_list(l);
+        check_elem_typ(expr e);
+        (Void, SListAdd(expr l, expr e))
+
+      | ListLit l  -> check_list_binds (List.map expr l);
+        (List(first_elem(List.map expr l)), SListLit (List.map expr l))
+        
       | Call(fname, args) as call ->
           let fd = find_func fname in
           let param_length = List.length fd.formals in
@@ -203,40 +236,12 @@ let check (globals, functions) =
       let (t', e') = expr e
       and err = "expected Boolean expression in " ^ string_of_expr e
       in if t' != Bool then raise (Failure err) else (t', e')
-    in
 
-    let check_int_expr e = 
-      let (t', e') = expr e
-      and err = "expected Integer expression in " ^ string_of_expr e
-      in if t' != Int then raise (Failure err) else (t', e')
-      
-    in
-
-    let check_match_list_type_expr l e =
-      let (t', e') as e'' = expr e
-    in let err = "incompatible list and expression types: " ^ (string_of_typ t') ^ ", " ^ (string_of_sexpr e'') in
-    if t' != (check_list_type l) then raise (Failure err) else (t', e') 
-  
     in
 
     (* Return a semantically-checked statement i.e. containing sexprs *)
     let rec check_stmt = function
         Expr e -> SExpr (expr e)
-      | ListAppend(var, e) -> 
-        let _ = check_list_type var in
-        SListAppend(var, check_match_list_type_expr var e)
-      | ListSet(var, e1, e2) ->
-          SListSet(check_list_type var, var, check_int_expr e1, check_match_list_type_expr var e2)
-      | ListClear var ->
-          SListClear(check_list_type var, var)
-      | ListRemove (var, e) ->
-          let _ = check_list_type var in
-          SListRemove(var, check_match_list_type_expr var e)
-      | ListInsert (var, e1, e2) ->
-          let _ = check_list_type var in
-          SListInsert(var, check_int_expr e1, check_match_list_type_expr var e2)
-      | ListReverse var -> 
-          SListReverse(check_list_type var, var)
       | If(p, b1, b2) -> SIf(check_bool_expr p, check_stmt b1, check_stmt b2)
       | For(e1, e2, e3, st) -> SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
       | While(p, s) -> SWhile(check_bool_expr p, check_stmt s)

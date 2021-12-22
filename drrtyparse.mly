@@ -8,11 +8,10 @@ open Ast
 %token PLUS MINUS TIMES DIVIDE ASSIGN
 %token NOT EQ NEQ LT LEQ GT GEQ AND OR EOL
 %token FUNCTION END RETURN IF ELSE FOR WHILE INT BOOL FLOAT LIST VOID STRING
-%token LISTAPPEND LISTGET LISTSET LISTPOP LISTLENGTH LISTSLICE LISTCLEAR LISTREVERSE LISTINSERT LISTREMOVE LISTINDEX
+%token LIST LISTLENGTH LISTGET LISTSET LISTADD
 %token <int> LITERAL
 %token <bool> BLIT
 %token <string> ID FLIT STRING_LITERAL
-%token LIST
 %token EOF
 
 %start program
@@ -28,6 +27,7 @@ open Ast
 %left PLUS MINUS
 %left TIMES DIVIDE
 %right NOT
+%right LISTLENGTH LISTGET LISTSET LISTADD
 %left LBRACKET RBRACKET
 
 %%
@@ -53,7 +53,7 @@ formals_opt:
   | formal_list   { $1 }
 
 formal_list:
-    typ ID                   { [($1,$2)]     }
+    typ ID                   { [($1, $2)]     }
   | formal_list COMMA typ ID { ($3,$4) :: $1 }
 
 typ:
@@ -85,13 +85,7 @@ stmt:
   | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt { For($3, $5, $7, $9)   }
   | WHILE LPAREN expr RPAREN stmt                           { While($3, $5) }
 
-  | LISTAPPEND LPAREN ID COMMA expr RPAREN SEMI            { ListAppend($3, $5) }
-  | LISTSET LPAREN ID COMMA expr COMMA expr RPAREN SEMI    { ListSet($3, $5, $7) }
-  | ID LBRACKET expr RBRACKET ASSIGN expr SEMI             { ListSet($1, $3, $6) }
-  | LISTCLEAR LPAREN ID RPAREN SEMI                        { ListClear($3) }
-  | LISTREMOVE LPAREN ID COMMA expr RPAREN SEMI            { ListRemove($3, $5) }  
-  | LISTINSERT LPAREN ID COMMA expr COMMA expr RPAREN SEMI { ListInsert($3, $5, $7) }
-  | LISTREVERSE LPAREN ID RPAREN SEMI                      { ListReverse($3) }
+
 
 expr_opt:
     /* nothing */ { Noexpr }
@@ -115,19 +109,19 @@ expr:
   | expr GEQ    expr { Binop($1, Geq,   $3)   }
   | expr AND    expr { Binop($1, And,   $3)   }
   | expr OR     expr { Binop($1, Or,    $3)   }
-  | MINUS expr %prec NOT { Unop(Neg, $2)      }
-  | NOT expr         { Unop(Not, $2)          }
-  | ID ASSIGN expr   { Assign($1, $3)         }
+  | MINUS expr %prec NOT      { Unop(Neg, $2) }
+  | NOT expr                  { Unop(Not, $2) }
+  | ID ASSIGN expr            { Assign($1, $3) }
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2 }
-  | LISTGET LPAREN ID COMMA expr RPAREN     { ListGet($3, $5) }
-  | ID LBRACKET expr RBRACKET               { ListGet($1, $3) }
-  | LISTPOP LPAREN ID RPAREN                { ListPop($3) }
-  | LISTLENGTH LPAREN ID RPAREN             { ListLength($3) }
-  | LISTSLICE LPAREN ID COMMA expr COMMA expr RPAREN { ListSlice($3, $5, $7) }
-  | ID LBRACKET expr_opt COLON expr_opt RBRACKET     { ListSlice($1, $3, $5) }
-  | LISTINDEX LPAREN ID COMMA expr RPAREN            { ListIndex($3, $5) }
-  | LBRACKET args_opt RBRACKET                       { ListLit($2) }
+
+  | LBRACKET args_opt RBRACKET                { ListLit($2) }
+  | expr LISTLENGTH LPAREN RPAREN             { ListLength($1) }
+  | expr LISTGET LPAREN expr RPAREN           { ListGet($1, $4) }
+  // | expr LBRACKET expr RBRACKET               { ListGet($1, $3) }
+  | expr LISTSET LPAREN expr COMMA expr RPAREN    { ListSet($1, $4, $6) }
+  // | expr LBRACKET expr RBRACKET ASSIGN expr                { ListSet($1, $3, $6) }
+  | expr LISTADD LPAREN expr RPAREN                        { ListAdd($1, $4) }
 
 args_opt:
     /* nothing */ { [] }
