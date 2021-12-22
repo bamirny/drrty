@@ -5,13 +5,13 @@ test : all testall.sh
 	./testall.sh
 
 .PHONY : all
-all : drrty.native library.o htmllibrary.o
+all : drrty.native listlibrary.o htmllibrary.o
 
-library.bc: library.c
-	clang -emit-llvm -o library.bc -c library.c -Wno-varargs
+listlibrary.bc: listlibrary.c
+	clang -emit-llvm -o listlibrary.bc -c listlibrary.c -Wno-varargs
 
-library: library.c
-	cc -o library -DBUILD_TEST library.c
+listlibrary: listlibrary.c
+	cc -o listlibrary -DBUILD_TEST listlibrary.c
 
 htmllibrary : htmllibrary.c
 	cc -o htmllibrary -DBUILD_TEST htmllibrary.c

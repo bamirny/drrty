@@ -36,13 +36,6 @@ type sfunc_decl = {
     sbody : sstmt list;
   }
 
-  type shtml = 
-      SHexpr of sexpr (*will turn into strings *)
-  |   SBitag of string * html 
-  |   STag of string   (*branches *)
-  |   SHstringlit of string (*leaf nodes  *)
-  |   SHseq of shtml * shtml  (*branches *)
-
 type sprogram = bind list * sfunc_decl list
 
 (* Pretty-printing functions *)
@@ -66,7 +59,6 @@ let rec string_of_sexpr (t, e) =
   | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
   | SCall(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
-  | SHtml(s) -> s
   | SNoexpr -> ""
 				  ) ^ ")"
 

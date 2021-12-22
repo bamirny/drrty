@@ -3,7 +3,7 @@ def int main(){
 	numbers = [1,2,3,4,5,6,7];
 	print(numbers.get(3));
 
-	numbers.set(3,44);    /*test replaces values in the list*/
+	numbers.set(3, 44);    /*test replaces values in the list*/
 	print(numbers.get(3));
 
 	return 0;

@@ -1,6 +1,6 @@
 def int main(){
     list[str] names;
     names = ["Dylan", "Richard", "Rania", "Trinity"];
-    append(names, "Edwards");
+    names.add("Edwards");
     prints(names[4]);
 }

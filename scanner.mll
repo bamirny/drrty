@@ -12,8 +12,6 @@ let digits = digit+
 let ascii = ([' '-'!' '#'-'[' ']'-'~'])
 let escape = '\\' ['\\' ''' '"' 'n' 'r' 't']
 let string = '"' ( (ascii | escape)* as s) '"'
-(* let ltag = '<' string [^ digit] '>'
-let rtag = "</" string [^ digit] '>' *)
 
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
@@ -24,8 +22,6 @@ rule token = parse
 | '}'      { RBRACE }
 | '['      { LBRACKET }
 | ']'      { RBRACKET }
-| "<>"     { LKITE }
-| "</>"    { RKITE }
 | ';'      { SEMI }
 | ':'      { COLON }
 | ','      { COMMA }
@@ -67,10 +63,6 @@ rule token = parse
 | digits '.'  digit* ( ['e' 'E'] ['+' '-']? digits )? as lxm { FLIT(lxm) }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*     as lxm { ID(lxm) }
 | string            { STRING_LITERAL( (unescape s) ) }
-| "<div>"   { LTAG }
-| "</div>"  { RTAG }
-(* | ltag     { LTAG }
-| rtag     { RTAG } *)
 | eof { EOF }
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
 

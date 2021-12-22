@@ -26,7 +26,7 @@ let translate (globals, functions) =
   let context    = L.global_context () in
 
   (* Load library *)
-  let llmem_lib = L.MemoryBuffer.of_file "library.bc" in
+  let llmem_lib = L.MemoryBuffer.of_file "listlibrary.bc" in
   let llm_lib = Llvm_bitreader.parse_bitcode context llmem_lib in
 
   (* Create the LLVM compilation module into which
@@ -126,15 +126,6 @@ let translate (globals, functions) =
   let makeInput_func : L.llvalue =
       L.declare_function "makeInput" makeInput_t the_module in
 
-
-  (* LLVM insists each basic block end with exactly one "terminator"
-    instruction that transfers control.  This function runs "instr builder"
-    if the current block does not already have a terminator.  Used,
-    e.g., to handle the "fall off the end of the function" case. *)
-    let add_terminal builder instr =
-    match L.block_terminator (L.insertion_block builder) with
-      Some _ -> ()
-    | None -> ignore (instr builder) in
   (* List Functions *)
   let printl_t : L.lltype = 
       L.function_type list_t [| list_t |] in
