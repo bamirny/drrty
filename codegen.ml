@@ -72,6 +72,44 @@ let translate (globals, functions) =
   let printf_func : L.llvalue =
     L.declare_function "printf" printf_t the_module in
 
+  (* C-Library HTML Functions *)
+
+  let createHTMLDocument_t : L.lltype =
+    L.function_type i32_t [| string_t |] in
+  let createHTMLDocument_func : L.llvalue =
+    L.declare_function "createHTMLDocument" createHTMLDocument_t the_module in
+  
+  let createElement_t : L.lltype =
+    L.function_type i32_t [| string_t; string_t; string_t |] in
+  let createElement_func : L.llvalue =
+      L.declare_function "createElement" createElement_t the_module in
+
+  let createHTML_t : L.lltype =
+    L.function_type i32_t [| string_t |] in
+  let createHTML_func : L.llvalue =
+      L.declare_function "createHTML" createHTML_t the_module in
+
+  let makeHeader_t : L.lltype =
+    L.function_type i32_t [| string_t |] in
+  let makeHeader_func : L.llvalue =
+      L.declare_function "makeHeader" makeHeader_t the_module in
+
+  let makeText_t : L.lltype =
+    L.function_type i32_t [| string_t |] in
+  let makeText_func : L.llvalue =
+      L.declare_function "makeText" makeText_t the_module in
+
+  let makeImage_t : L.lltype =
+    L.function_type i32_t [| string_t |] in
+  let makeImage_func : L.llvalue =
+      L.declare_function "makeImage" makeImage_t the_module in
+
+  let makeInput_t : L.lltype =
+    L.function_type i32_t [| string_t |] in
+  let makeInput_func : L.llvalue =
+      L.declare_function "makeInput" makeInput_t the_module in
+
+
   (* LLVM insists each basic block end with exactly one "terminator"
     instruction that transfers control.  This function runs "instr builder"
     if the current block does not already have a terminator.  Used,
@@ -479,12 +517,8 @@ let translate (globals, functions) =
     let int_format_str = L.build_global_stringptr "%d<br>\n" "fmt" builder
     and float_format_str = L.build_global_stringptr "%g<br>\n" "fmt" builder
     and string_format_str = L.build_global_stringptr "<span>%s</span><br>\n" "fmt" builder
-    and header_format_str = L.build_global_stringptr "<h1>%s</h1>\n" "fmt" builder
-    and subheader_format_str = L.build_global_stringptr "<h2>%s</h2>\n" "fmt" builder
-    and paragraph_format_str = L.build_global_stringptr "<p>%s</p>\n" "fmt" builder
-    and image_format_str = L.build_global_stringptr "<img src='%s'>\n" "fmt" builder
-    and list_format_str = L.build_global_stringptr "<li>%s</li>\n" "fmt" builder in
-
+    in
+    
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
        value, if appropriate, and remember their values in the "locals" map *)
@@ -594,22 +628,37 @@ let translate (globals, functions) =
           in
           let _ = List.rev (List.map map_func literals) in
           L.build_load new_list_ptr "new_list" builder
+
       | SCall ("print", [e]) | SCall ("printb", [e]) ->
         L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder
       | SCall ("prints", [e]) ->
         L.build_call printf_func [| string_format_str ; (expr builder e) |] "printf" builder
-      | SCall ("makeHeader", [e]) ->
-        L.build_call printf_func [| header_format_str ; (expr builder e) |] "printf" builder
-      | SCall ("makeSubheader", [e]) ->
-        L.build_call printf_func [| subheader_format_str ; (expr builder e) |] "printf" builder
-      | SCall ("makeText", [e]) ->
-        L.build_call printf_func [| paragraph_format_str ; (expr builder e) |] "printf" builder
-      | SCall ("makeImage", [e]) ->
-        L.build_call printf_func [| image_format_str ; (expr builder e) |] "printf" builder
-      | SCall ("makeList", [e]) ->
-        L.build_call printf_func [| list_format_str ; (expr builder e) |] "printf" builder
       | SCall ("printf", [e]) ->
         L.build_call printf_func [| float_format_str ; (expr builder e) |] "printf" builder
+
+      (* HTML Library Function Calls *)
+      | SCall ("createHTMLDocument", [e] ) ->
+        L.build_call createHTMLDocument_func [| (expr builder e) |] "createHTMLDocument" builder
+
+      | SCall ("createElement", [e1;e2;e3] ) ->
+        L.build_call createElement_func [| (expr builder e1); (expr builder e2);(expr builder e3) |] "createElement" builder
+        
+      | SCall ("createHTML", [e] ) ->
+        L.build_call createHTML_func [| (expr builder e) |] "createHTML" builder
+
+      | SCall ("makeHeader", [e1]) ->
+        L.build_call makeHeader_func [| (expr builder e1) |] "makeHeader" builder
+  
+      | SCall ("makeText", [e1]) ->
+        L.build_call makeText_func [| (expr builder e1) |] "makeText" builder
+
+      | SCall ("makeImage", [e1]) ->
+        L.build_call makeImage_func [| (expr builder e1) |] "makeImage" builder
+
+      | SCall ("makeInput", [e]) ->
+        L.build_call makeInput_func [| (expr builder e) |] "makeInput" builder
+      
+
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (expr builder) (List.rev args)) in

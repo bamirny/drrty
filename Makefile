@@ -5,14 +5,17 @@ test : all testall.sh
 	./testall.sh
 
 .PHONY : all
-all : drrty.native
+all : drrty.native htmllibrary.o
 
 drrty.native :
 	opam config exec -- \
-	rm -f *.o
 	ocamlbuild -use-ocamlfind -pkgs llvm.bitreader drrty.native
 
 # "make clean" removes all generated files
+
+htmllibrary : htmllibrary.c
+	cc -o htmllibrary -DBUILD_TEST htmllibrary.c
+
 
 .PHONY : clean
 clean :
@@ -22,7 +25,6 @@ clean :
 	rm -rf *.err *.out *.exe *.s
 	rm -f *.o
 
-# Testing the "printbig" example
 
 # Building the tarball
 
