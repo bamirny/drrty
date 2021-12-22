@@ -52,16 +52,10 @@ rule token = parse
 | "float"  { FLOAT }
 | "void"   { VOID }
 | "str"    { STRING }
-| "add" { LISTADD }
-| "get"    { LISTGET}
-| "set"    { LISTSET }
-| "pop"    { LISTPOP }
-| "length" { LISTLENGTH }
-| "slice"  { LISTSLICE }
-| "clear"  { LISTCLEAR }
-| "insert"  { LISTINSERT }
-| "remove"  { LISTREMOVE }
-| "index"   { LISTINDEX}
+| ".get"    { LISTGET}
+| ".set"    { LISTSET }
+| ".add"    { LISTADD }
+| ".length" { LISTLENGTH }
 | "list"    { LIST }
 | "True"   { BLIT(true)  }
 | "False"  { BLIT(false) }

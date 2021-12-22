@@ -13,12 +13,11 @@ and sx =
   | SUnop of uop * sexpr
   | SAssign of string * sexpr
   | SCall of string * sexpr list
-  | SListGet of typ * string * sexpr
-  | SListPop of typ * string
-  | SListLength of typ * string
-  | SListSlice of typ * string * sexpr * sexpr
-  | SListIndex of typ * string * sexpr
-  | SListLit of typ * sexpr list
+  | SListLit of sexpr list
+  | SListLength of sexpr
+  | SListGet of sexpr * sexpr
+  | SListSet of sexpr * sexpr * sexpr
+  | SListAdd of sexpr * sexpr
   | SNoexpr
 
 type sstmt =
@@ -28,11 +27,6 @@ type sstmt =
   | SIf of sexpr * sstmt * sstmt
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SWhile of sexpr * sstmt
-  | SListAdd of string * sexpr
-  | SListSet of typ * string * sexpr * sexpr
-  | SListClear of typ * string
-  | SListRemove of string * sexpr
-  | SListInsert of string * sexpr * sexpr
 
 type sfunc_decl = {
     styp : typ;
@@ -53,12 +47,11 @@ let rec string_of_sexpr (t, e) =
   | SBoolLit(false) -> "False"
   | SFliteral(l) -> l
   | SStringLit(s) -> s
-  | SListGet(_, id, e) -> "get " ^ id ^ ", " ^ (string_of_sexpr e)
-  | SListPop (_, id) -> "pop " ^ id
-  | SListLength(_, id) -> "length " ^ id
-  | SListSlice(_, id, e1, e2) -> "slice " ^ id ^ ", " ^ (string_of_sexpr e1) ^ ", " ^ (string_of_sexpr e2)
-  | SListIndex(_, id, e) -> "index " ^ id ^ ", " ^ (string_of_sexpr e)
-  | SListLit(_) -> "list literal"
+  | SListLit(l) -> "[" ^ String.concat "," (List.map string_of_sexpr l) ^ "]"
+  | SListLength(l) -> string_of_sexpr l ^ ".length()"
+  | SListGet(l, idx) -> string_of_sexpr l ^ ".get(" ^ string_of_sexpr idx ^ ")"
+  | SListSet(l, idx, e) -> string_of_sexpr l ^ ".set(" ^ string_of_sexpr idx ^ "," ^ string_of_sexpr e ^ ")"
+  | SListAdd(l, e) -> string_of_sexpr l ^ ".add(" ^ string_of_sexpr e ^ ")"
   | SId(s) -> s
   | SBinop(e1, o, e2) ->
       string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
@@ -78,11 +71,6 @@ let rec string_of_sstmt = function
   | SIf(e, s1, s2) ->  "if (" ^ string_of_sexpr e ^ ")\n" ^ string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2
   | SFor(e1, e2, e3, s) -> "for (" ^ string_of_sexpr e1  ^ " ; " ^ string_of_sexpr e2 ^ " ; " ^ string_of_sexpr e3  ^ ") " ^ string_of_sstmt s
   | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
-  | SListAdd(id, e) -> "add " ^ id ^ ", " ^ string_of_sexpr e
-  | SListSet(_, id, e1, e2) -> "set " ^ id ^ ", " ^ (string_of_sexpr e1) ^ ", " ^ (string_of_sexpr e2)
-  | SListClear(_, id) -> "clear " ^ id
-  | SListRemove(id, e) -> "remove " ^ id ^ ", " ^ (string_of_sexpr e)
-  | SListInsert(id, e1, e2) -> "insert " ^ id ^ ", " ^ (string_of_sexpr e1) ^ ", " ^ (string_of_sexpr e2)
 
 let string_of_sfdecl fdecl =
   "def " ^ string_of_typ fdecl.styp ^ " " ^

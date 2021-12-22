@@ -5,12 +5,18 @@ test : all testall.sh
 	./testall.sh
 
 .PHONY : all
-all : drrty.native
+all : drrty.native library.o
+
+library.bc: library.c
+	clang -emit-llvm -o library.bc -c library.c -Wno-varargs
+
+library: library.c
+	cc -o library -DBUILD_TEST library.c
 
 drrty.native :
 	opam config exec -- \
 	rm -f *.o
-	ocamlbuild -use-ocamlfind -pkgs llvm.bitreader drrty.native
+	ocamlbuild -use-ocamlfind -pkgs llvm,llvm.analysis,llvm.bitreader drrty.native
 
 # "make clean" removes all generated files
 
