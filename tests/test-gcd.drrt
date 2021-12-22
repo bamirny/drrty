@@ -14,5 +14,5 @@ def int main(){
 	print(gcd(10,100));
 
 	return 0;
-
 }
+
