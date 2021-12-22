@@ -1,0 +1,7 @@
+def int main(){
+	makeHeader(Hello World);
+	makeSubheader(1000);
+
+	return 0;
+	
+}

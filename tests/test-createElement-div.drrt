@@ -1,0 +1,6 @@
+def int main(){
+	createHTMLDocument("printbig.css");
+	createElement("div","newel","This element will have a different color");
+	return 0;
+	
+}

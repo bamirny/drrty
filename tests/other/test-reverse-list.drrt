@@ -1,0 +1,15 @@
+def int main(){
+	/*list[str] names;
+	names = ["Trinity", "Dylan", "Richard", "Rania"];
+	prints(names[0]);*/
+
+	list[int] num;
+	num = [1,2,3,4]
+
+	reverse(num);
+	/*prints(names[0]);*/
+
+	return 0;
+	
+
+}

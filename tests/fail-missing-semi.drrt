@@ -1,0 +1,7 @@
+def int main(){
+	makeHeader("Hello World");
+	makeText("My name is") /*missing semicolon*/
+	
+	return 0;
+
+}

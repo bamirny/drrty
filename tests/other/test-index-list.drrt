@@ -1,0 +1,8 @@
+def int main() {
+	list[str] names;
+	names = ["Trinity", "Dylan", "Richard", "Rania"];
+	
+	print(index(names,"Trinity"));
+	
+	return 0;
+}

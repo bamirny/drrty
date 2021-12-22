@@ -1,34 +1,52 @@
-
-def int main(){
-  int i;
-  int j;
-
-  createHTMLDocument("printbig.css");
-  makeHeader("Umm we've been lazy so we haven't been using GitHub...");
-  createHTML("<h2 class=\"lazy-or-stupid\">That's not lazy, that's stupid!</h2>"); 
-
-  for (i = 0; i < 28; i = i + 1){
-      if( j == 0){
-        createElement("div", "", "bigClass"); 
-        j = 1; 
-      }else{
-        if (i >= 0 && i <7){
-            createElement("img", "1.jpeg", "smallClass");  
-        }
-        if (i >= 7 && i < 14){
-            createElement("img", "2.jpeg", "smallClass");  
-        }
-        if (i >= 14 && i < 21){
-            createElement("img", "3.jpeg", "smallClass");  
-        }
-        if (i >= 21 && i < 28){
-            createElement("img", "4.jpeg", "smallClass");  
-        }
-        j = 0;
-      }
-  }
-  return 0;
+def int color(list[str] x,list[str] y,list[str] z){
+	
+	int i;
+	for (i = 0; i<length(x); i = i+1){
+		createElement("div","column",x[i]);
+		createElement("div","column",y[i]);
+		createElement("div","row",z[i]);
+	}
+	return 0;
 }
 
+def int main() {
+	list[str] names;
+	list[str] favs;
+	list[str] job;
+
+	list[str] snames;
+	list[str] sfavs;
+	list[str] sjob;
+	
+	makeHeader("The Team and Our Favorite Colors!");
+	makeSubheader("Below is a table that contains our names, positions, and favorite colors");
+	
+	names = ["Dylan","Richard","Rania","Trinity"];
+	favs = ["orange","yellow","green","blue"];
+	job = ["Manager","Language Guru", "Tester", "System Architect"];
+	createHTMLDocument("printbig.css");
+	*color(names, job, favs);
+
+	append(names,"Professor Edwards");
+	append(job, "Advisor, Professor");
+	append(favs, "black");
+
+	/*color(names, job, favs);*/
+	pop(names);
+	pop(job);
+	pop(favs);
+
+	/*color(names, job, favs);*/
 
 
+
+	snames = slice(names,1,2);
+	sfavs = slice(favs,1,2);
+	sjob = slice(job,1,2);
+
+	/*color(snames, sjob, sfavs);*/
+	
+
+	return 0;
+	
+}

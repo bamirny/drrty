@@ -1,0 +1,18 @@
+
+int counter(){ /*incorrect function declaration*/
+	int i;
+	for (i=0; i<5; i=i+1){
+		print(i);
+	}
+
+}
+
+
+
+
+
+def int main(){
+
+	return 0;
+
+}	

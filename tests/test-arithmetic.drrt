@@ -1,0 +1,22 @@
+def void arithmetic( int x, int y){
+	print(x + y);
+	print(x-y);
+	print(x*y);
+	print(x/y);
+	printb(x == y);
+	printb(x == x);
+	printb(x!=y);
+	printb(x!=x);
+	printb(x>y);
+	printb(x>=y);
+	printb(x<y);
+	printb(x<=y);
+}
+
+def int main(){
+	arithmetic(100,10);
+	arithmetic( 50,25);
+	return 0;
+	
+
+}	

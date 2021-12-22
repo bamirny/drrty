@@ -1,0 +1,14 @@
+
+
+def int main(){		/*creating a horizontal line with HTML*/
+
+	makeHeader("This is the first separated header");
+	createElement("hr", "","");					
+	makeHeader("This is the other separated header");
+
+	return 0;
+
+}
+
+
+

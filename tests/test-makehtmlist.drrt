@@ -1,0 +1,13 @@
+
+
+def int main() {
+	int i;
+	list[str] names;
+	names =["Rania", "Trinity", "Dylan", "Richard"];
+
+	for (i=0; i<length(names);i = i+1){
+		makeList(names[i]);
+	}
+	
+	return 0; 
+}

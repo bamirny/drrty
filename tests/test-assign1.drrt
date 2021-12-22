@@ -1,0 +1,17 @@
+def int main(){
+	int x;
+	bool b;
+	str s;
+	list[int] numb;
+	list[str] names;
+	
+	x = 0;
+	b = True;
+	s = "Hello!";
+	numb = [1,2,3];
+	names = ["Rania","Richard","Dylan","Trinity"];
+	
+	
+	return 0;
+
+}

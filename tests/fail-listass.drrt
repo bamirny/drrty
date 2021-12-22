@@ -1,0 +1,6 @@
+def int main(){
+	list[str] L1;
+	L1 = [hi,hello,how are you];
+
+	return 0;
+}	

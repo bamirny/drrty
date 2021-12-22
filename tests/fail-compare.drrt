@@ -1,0 +1,14 @@
+def int main(){
+	str name;
+	str color;
+	bool b;
+
+	name="Rania";
+	color="Orange";
+	b = name > color;	
+	
+	return 0;
+
+
+
+}

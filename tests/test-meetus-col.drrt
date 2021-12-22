@@ -1,0 +1,32 @@
+def int main(){
+	list[str] team;
+	int i;
+	list[str] job;
+	list[str] img;
+	
+	createHTMLDocument("printbig.css");
+
+	team = ["Dylan","Richard","Rania","Trinity"];
+
+
+	job = ["Manager","Language Guru", "Tester", "System Architect"];
+
+	
+
+	makeHeader("Meet the DRRTY Team!");
+
+	for (i = 0; i<length(team);i=i+1){
+		createElement("div","column",team[i]);
+		createElement("div","row",job[i]);
+	}
+	
+	
+
+
+
+
+
+
+return 0;
+
+}

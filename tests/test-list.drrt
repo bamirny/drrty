@@ -1,10 +1,6 @@
 def int main(){
-    list[int] names;
-    names = [1, 2];
-    names.set(1, 1);
-    names.add(2);
-    print(names.get(1));
-    print(names.get(2));
-    print(names.length());
-    return 0;
+    list[str] names;
+    names = ["Dylan", "Richard", "Rania", "Trinity"];
+    append(names, "Edwards");
+    prints(names[4]);
 }

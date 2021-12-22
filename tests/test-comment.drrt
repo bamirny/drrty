@@ -1,0 +1,4 @@
+def int main(){
+	/*This is a comment and will not show in the output*/
+	return 0;
+}

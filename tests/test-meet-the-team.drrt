@@ -1,0 +1,26 @@
+def int main() {
+	list[str] team;
+	int i;
+	list[str] job;
+	list[str] img;
+	
+	team = ["Dylan","Richard","Rania","Trinity"];
+
+
+	job = ["Manager","Language Guru", "Tester", "System Architect"];
+
+	img = ["https://cdn.pixabay.com/photo/2021/12/16/20/13/ducks-6875155__340.jpg","https://cdn.pixabay.com/photo/2021/10/08/06/45/seagulls-6690361__340.jpg","https://cdn.pixabay.com/photo/2021/11/06/22/05/camels-6774540__340.jpg","https://cdn.pixabay.com/photo/2021/11/16/08/01/animal-6800387__340.jpg"];
+
+	makeHeader("Meet the DRRTY Team!");
+
+	
+	for(i=0; i<length(team);i = i+1){
+
+		makeSubheader(team[i]);
+		makeList(job[i]);
+
+		makeImage(img[i]);
+	}
+	return 0;
+
+}

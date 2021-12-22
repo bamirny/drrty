@@ -1,0 +1,8 @@
+def int main(){
+	list[int] numbers;
+	numbers = [1,2,3,4,5];
+	print(numbers[7];
+
+	return 0;
+	
+}

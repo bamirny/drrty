@@ -1,0 +1,19 @@
+def int main(){
+	list[str] condiments;
+	int len;
+	int new_len;
+
+	condiments = ["ketchup", "mustard", "mayo", "hot sauce"];
+	len = length(condiments);
+	print(len);
+
+	pop(condiments);
+	new_len = len -1;
+	
+	print(new_len);
+
+	prints(condiments[new_len-1]);
+
+	return 0;
+
+}

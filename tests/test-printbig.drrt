@@ -3,19 +3,18 @@ def int main(){
   int i;
   int j;
   createHTMLDocument("printbig.css");
-  makeHeader("Hello There Drrty Lads");
-  for (i = 0; i < 40; i = i + 1){
+  for (i = 0; i < 100; i = i + 1){
       if( j == 0){
-        createElement("div", "", "bigClass"); 
+        createElement("div", "bigClass", ""); 
         j = 1; 
       }else{
-        createElement("div", "", "smallClass");  
+        createElement("div", "smallClass", "");  
         j = 0;
       }
   }
-  makeHeader("Bye Drrty");
   return 0;
 }
 
 
 
+  

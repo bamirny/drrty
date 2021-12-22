@@ -1,0 +1,13 @@
+int x;
+int y;
+
+
+
+def int main() {
+	int z;
+
+	x=12;
+	y=15;
+	z = x+y;
+	return z;
+}	

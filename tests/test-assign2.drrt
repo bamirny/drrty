@@ -1,0 +1,18 @@
+def int main() {
+	
+	int z;
+	int x;
+	int y;
+	
+	bool on;
+
+	x = 3;
+	y = 2;
+	z = x+y ; 
+	on = x>y;
+
+	print(z);
+	
+	return 0;
+
+}

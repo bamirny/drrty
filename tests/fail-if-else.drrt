@@ -1,0 +1,9 @@
+def int main(){
+	if (){ //no if conditional
+		prints("Yes");
+	}else{
+		prints("No");
+	}
+	return 0;
+
+}
