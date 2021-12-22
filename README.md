@@ -6,9 +6,9 @@
 
   If this fails, you will need to correct your installation.
 
-* Move to where you unpacked the microc source:
+* Move to where you unpacked the drrty source:
 
-  cd microc
+  cd drrty
 
 * Invoke docker
 
