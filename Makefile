@@ -5,7 +5,7 @@ test : all testall.sh
 	./testall.sh
 
 .PHONY : all
-all : drrty.native printbig.o
+all : drrty.native htmllibrary.o
 
 drrty.native :
 	opam config exec -- \
@@ -13,8 +13,8 @@ drrty.native :
 
 # "make clean" removes all generated files
 
-printbig : printbig.c
-	cc -o printbig -DBUILD_TEST printbig.c
+htmllibrary : htmllibrary.c
+	cc -o htmllibrary -DBUILD_TEST htmllibrary.c
 
 
 .PHONY : clean
@@ -25,7 +25,6 @@ clean :
 	rm -rf *.err *.out *.exe *.s
 	rm -f *.o
 
-# Testing the "printbig" example
 
 # Building the tarball
 
