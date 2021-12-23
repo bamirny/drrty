@@ -115,13 +115,11 @@ expr:
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2 }
 
-  | LBRACKET args_opt RBRACKET                { ListLit($2) }
-  | expr LISTLENGTH LPAREN RPAREN             { ListLength($1) }
-  | expr LISTGET LPAREN expr RPAREN           { ListGet($1, $4) }
-  // | expr LBRACKET expr RBRACKET               { ListGet($1, $3) }
+  | LBRACKET args_opt RBRACKET                    { ListLit($2) }
+  | expr LISTLENGTH LPAREN RPAREN                 { ListLength($1) }
+  | expr LISTGET LPAREN expr RPAREN               { ListGet($1, $4) }
   | expr LISTSET LPAREN expr COMMA expr RPAREN    { ListSet($1, $4, $6) }
-  // | expr LBRACKET expr RBRACKET ASSIGN expr                { ListSet($1, $3, $6) }
-  | expr LISTADD LPAREN expr RPAREN                        { ListAdd($1, $4) }
+  | expr LISTADD LPAREN expr RPAREN               { ListAdd($1, $4) }
 
 args_opt:
     /* nothing */ { [] }

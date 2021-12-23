@@ -2,7 +2,7 @@ def int main(){
 	int m;
 	m=9;
 
-	createElement("div","",int); /*int tmp instead of string for last parameter*/
+	createElement("div",int,""); /*int tmp instead of string for last parameter*/
 	return 0;
 
 }

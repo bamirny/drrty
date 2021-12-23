@@ -3,3 +3,17 @@ img{
     height: auto ;  
 }
 
+.column{
+    width:50%;
+    float:left;
+   
+    font-size: 50px;
+    padding:0;
+}
+.row{
+    padding:0;
+    width:50%;
+    float:left;
+    font-size: 50px;
+}
+

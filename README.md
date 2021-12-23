@@ -13,3 +13,5 @@
 * Invoke docker
 
 docker run --rm -it -v `pwd`:/home/drrty -w=/home/drrty columbiasedwards/plt
+
+Note: clang is necessary to generate listlibrary.bc file

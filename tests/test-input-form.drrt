@@ -1,0 +1,14 @@
+def int main(){
+	str head;
+
+	head = "This is the header for my form!";
+	makeHeader(head);
+
+	makeText("Please enter your name in here");
+	makeInput("");/* Takes in class name*/
+
+	createElement("button","Submit","");
+
+	return 0;
+
+}

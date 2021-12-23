@@ -1,8 +1,0 @@
-def int main(){
-	list[int] empty;
-	empty = [];
-	clear(empty) /*Clearing an empty list */
-
-	return 0;
-
-}

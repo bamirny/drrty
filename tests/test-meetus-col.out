@@ -1,9 +1,9 @@
-<!DOCTYPE html><html><head><link rel="stylesheet" href="printbig.css"></head><body><h1>Meet the DRRTY Team!</h1>
-<div class="column">Dylan</div>
-<div class="row">Manager</div>
-<div class="column">Richard</div>
-<div class="row">Language Guru</div>
-<div class="column">Rania</div>
-<div class="row">Tester</div>
-<div class="column">Trinity</div>
-<div class="row">System Architect</div>
+<!DOCTYPE html><html><head><link rel="stylesheet" href="demo.css"></head><body><h1>Meet the DRRTY Team!</h1>
+<div class="row">Dylan</div>
+<div class="column">Manager</div>
+<div class="row">Richard</div>
+<div class="column">Language Guru</div>
+<div class="row">Rania</div>
+<div class="column">Tester</div>
+<div class="row">Trinity</div>
+<div class="column">System Architect</div>

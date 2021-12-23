@@ -14,12 +14,12 @@ def int main() {
 	makeHeader("Meet the DRRTY Team!");
 
 	
-	for(i=0; i<length(team);i = i+1){
+	for(i=0; i<team.length();i = i+1){
 
-		makeSubheader(team[i]);
-		makeList(job[i]);
+		makeText(team.get(i));
+		createElement("h2",job.get(i),"");
 
-		makeImage(img[i]);
+		makeImage(img.get(i));
 	}
 	return 0;
 

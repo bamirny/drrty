@@ -1,15 +1,15 @@
-
 def int main(){
-  int i;
-  int j;
-  list[str] images;
-  createHTMLDocument("printbig.css");
-  makeHeader("\"Umm we've been lazy so we haven't been using GitHub...\"");
-  createHTML("<h2 class=\"lazy-or-stupid\">\"That's not lazy, that's stupid!\" - Prof. Edwards</h2>"); 
- 
-  images = ["1.jpeg","2.jpeg","3.jpeg","4.jpeg"];	
+    int i;
+    int j;
+    list[str] images;
 
-  for (i = 0; i < 28; i = i + 1){
+    createHTMLDocument("printbig.css");
+    makeHeader("\"Umm we've been lazy so we haven't been using Github...\"");
+    createHTML("<h2 class=\"lazy-or-stupid\">\"That's not lazy, that's stupid!\" -Prof Edwards </h2>");
+
+    images = ["1.jpeg","2.jpeg","3.jpeg","4.jpeg"];
+
+    for (i = 0; i < 28; i = i + 1){
       if( j == 0){
         createElement("div", "", "bigClass"); 
         j = 1; 
@@ -30,7 +30,6 @@ def int main(){
       }
   }
   return 0;
+
+
 }
-
-
-

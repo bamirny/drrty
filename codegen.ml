@@ -127,11 +127,6 @@ let translate (globals, functions) =
       L.declare_function "makeInput" makeInput_t the_module in
 
   (* List Functions *)
-  let printl_t : L.lltype = 
-      L.function_type list_t [| list_t |] in
-  let printl_func : L.llvalue = 
-      L.declare_function "printl" printl_t the_module in
-
   let list_init_t = L.function_type list_t [||] in
   let list_init_func = L.declare_function "list_init" list_init_t the_module in
 
@@ -144,29 +139,28 @@ let translate (globals, functions) =
   let list_add_t = L.function_type i32_t [| list_t; void_ptr_t |] in
   let list_add_func = L.declare_function "list_add" list_add_t the_module in
 
-  (* Casting to Void *)
+  (* printl() does not yet support all list data types *)
+  let printl_t : L.lltype = 
+    L.function_type list_t [| list_t |] in
+  let printl_func : L.llvalue = 
+    L.declare_function "printl" printl_t the_module in
+
+  
+  (* Type casting for use with linked list*)
 
   (* From Int *)
   let list_set_int_t = L.function_type i32_t [| list_t; i32_t; i32_t |] in
   let list_set_int_func = L.declare_function "list_set_int" list_set_int_t the_module in
 
-    (* let list_pop_int_t = L.function_type i32_t [| list_t |] in
-    let list_pop_int_func = L.declare_function "list_pop_int" list_pop_int_t the_module in *)
-
   let list_add_int_t = L.function_type i32_t [| list_t; i32_t |] in
   let list_add_int_func = L.declare_function "list_add_int" list_add_int_t the_module in
-
 
   (* From String *)
   let list_set_str_t = L.function_type string_t [| list_t; i32_t; string_t |] in
   let list_set_str_func = L.declare_function "list_set_str" list_set_str_t the_module in
 
-    (* let list_pop_str_t = L.function_type string_t [| list_t |] in
-    let list_pop_str_func = L.declare_function "list_pop_str" list_pop_str_t the_module in *)
-
   let list_add_str_t = L.function_type i32_t [| list_t; string_t |] in
   let list_add_str_func = L.declare_function "list_add_str" list_add_str_t the_module in
-
 
   (* From Float *)
   let list_set_float_t = L.function_type float_t [| list_t; i32_t; float_t |] in
@@ -355,9 +349,10 @@ let translate (globals, functions) =
       | SCall ("makeInput", [e]) ->
         L.build_call makeInput_func [| (expr builder e) |] "makeInput" builder
       
-
+      (* List function printl() does not yet fully support all DRRTY list data types *)
       | SCall ("printl", [e]) ->
           L.build_call printl_func [| (expr builder e) |] "printl" builder
+      
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (expr builder) (List.rev args)) in
@@ -436,8 +431,8 @@ let translate (globals, functions) =
           A.Void -> L.build_ret_void
         | A.Float -> L.build_ret (L.const_float float_t 0.0)
         | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
-  in
+    in
 
-  List.iter build_function_body functions;
-  the_module
+    List.iter build_function_body functions;
+    the_module
   

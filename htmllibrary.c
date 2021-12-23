@@ -1,10 +1,7 @@
-/*
- *  A function illustrating how to link C code to code generated from LLVM 
- */
-
 #include <stdio.h>
 #include <string.h>
 
+/* HTML functions */ 
 void createHTMLDocument(char *cssFile){ 
   printf("<!DOCTYPE html><html><head><link rel=\"stylesheet\" href=\"%s\"></head><body>", cssFile);
 }

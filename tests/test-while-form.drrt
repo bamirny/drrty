@@ -1,0 +1,28 @@
+def int main(){
+	int i;
+	bool b;
+	
+	b = True;
+	i = 0;
+	
+	makeHeader("Log the names and numbers below!");
+
+	while(i<6){
+		if(b == True){
+			makeText("Name");
+			makeInput("");
+			createElement("button","Submit","");
+			i = i+1;
+			b = False;
+		}
+		else{
+			makeText("Phone Number");
+			makeInput("");
+			createElement("button","Submit","");
+			i = i+1;
+			b = True;
+		}
+	}
+	return 0;
+	
+}

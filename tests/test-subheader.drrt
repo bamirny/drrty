@@ -1,9 +1,0 @@
-def int main() {
-	makeHeader("Hello There!");
-	makeSubheader("My name is Rania");
-	makeSubheader("This is a Drrty test!");
-
-	return 0;
-	
-
-}

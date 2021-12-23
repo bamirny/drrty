@@ -1,6 +1,6 @@
 def int main(){
 	makeHeader(Hello World);
-	makeSubheader(1000);
+	makeText(Hello There);
 
 	return 0;
 	

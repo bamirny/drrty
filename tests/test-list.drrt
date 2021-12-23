@@ -2,5 +2,5 @@ def int main(){
     list[str] names;
     names = ["Dylan", "Richard", "Rania", "Trinity"];
     names.add("Edwards");
-    prints(names[4]);
+    prints(names.get(4));
 }

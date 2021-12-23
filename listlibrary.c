@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-//Linked List Implementation
+/* Linked list implementation */
 
 struct node{
     void * value;
@@ -99,6 +99,7 @@ int list_add(struct list *l, void *value){
 	return 1;
 }
 
+//list_pop() not integrated into code generator
 void * list_pop(struct list *l) {
 
 	if (l->head == NULL)
@@ -128,6 +129,7 @@ void * list_pop(struct list *l) {
 	return value;
 }
 
+//printl() does not yet support all DRRTY list data types
 void printl(struct list *l) {
 
 	printf("[");
@@ -144,7 +146,7 @@ void printl(struct list *l) {
 	printf("]\n");
 }
 
-// Casting types into generics
+/* Type casting for use with linked list */
 
 // From Integer
 int list_add_int (struct list * l, int value)
@@ -175,7 +177,7 @@ int list_pop_int(struct list * l)
     return *(int *) answer;
 }
 
-/* From Float */
+// From Float
 int list_add_float (struct list * l, double value)
 {
     double * d = malloc(sizeof(double));
@@ -204,7 +206,7 @@ double list_pop_float(struct list * l)
     return *(double *) answer;
 }
 
-/* From String */
+// From String
 int list_add_str (struct list * l, char * value)
 {
     return list_add(l, (void *) value);

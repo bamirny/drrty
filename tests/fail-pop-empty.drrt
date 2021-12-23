@@ -1,7 +1,0 @@
-def int main(){
-	list[int] empty;
-	empty = [];
-	pop(empty); /* popping from an empty list*/
-	return 0;
-
-}

@@ -5,8 +5,8 @@ def int main() {
 	list[str] names;
 	names =["Rania", "Trinity", "Dylan", "Richard"];
 
-	for (i=0; i<length(names);i = i+1){
-		makeList(names[i]);
+	for (i=0; i<names.length();i = i+1){
+		createElement("li",names.get(i),"");
 	}
 	
 	return 0; 

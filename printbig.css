@@ -36,3 +36,8 @@ h1{
 .lazy-or-stupid{
     font-family: 'Varela Round', sans-serif;
 }
+
+.column{
+    width: 30%;
+
+}

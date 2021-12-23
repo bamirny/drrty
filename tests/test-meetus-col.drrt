@@ -4,7 +4,7 @@ def int main(){
 	list[str] job;
 	list[str] img;
 	
-	createHTMLDocument("printbig.css");
+	createHTMLDocument("demo.css");
 
 	team = ["Dylan","Richard","Rania","Trinity"];
 
@@ -15,9 +15,9 @@ def int main(){
 
 	makeHeader("Meet the DRRTY Team!");
 
-	for (i = 0; i<length(team);i=i+1){
-		createElement("div","column",team[i]);
-		createElement("div","row",job[i]);
+	for (i = 0; i<team.length();i=i+1){
+		createElement("div",team.get(i),"row");
+		createElement("div",job.get(i),"column");
 	}
 	
 	

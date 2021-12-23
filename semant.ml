@@ -21,7 +21,7 @@ let check_list_typ m =
   List(ty) -> ty
   | _ -> raise (Failure ("Invalid list type: " ^ string_of_typ t))
 
-(* Use this function to check if the sexpr is acceptable element in list*)
+(* Checks whether sexpr is an acceptable list element*)
 let check_elem_typ = function
         (Void,_) -> raise(Failure("Invalid element type"))
   | _ -> ()
@@ -200,14 +200,14 @@ let check (globals, functions) =
       | ListLength l -> check_list(l);
         (Int, SListLength(expr l))
 
-      | ListGet(l, i) -> check_list(l);
-        check_typ(get_typ(expr i), Int);
-        (check_list_type(l), SListGet(expr l, expr i))
+      | ListGet(l, idx) -> check_list(l);
+        check_typ(get_typ(expr idx), Int);
+        (check_list_type(l), SListGet(expr l, expr idx))
 
-      | ListSet(l, i, e) -> check_list(l);
-        check_typ(get_typ(expr i), Int);
+      | ListSet(l, idx, e) -> check_list(l);
+        check_typ(get_typ(expr idx), Int);
         check_elem_typ(expr e);
-        (check_list_type(l), SListSet (expr l, expr i, expr e))
+        (check_list_type(l), SListSet (expr l, expr idx, expr e))
 
       | ListAdd(l, e) -> check_list(l);
         check_elem_typ(expr e);
